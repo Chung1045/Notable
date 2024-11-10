@@ -1,0 +1,60 @@
+body{
+    background-color: #fbfbfb;
+}
+#container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px 20px 0 20px; /* Add some padding on the sides */
+}
+
+.card {
+    width: 400px;
+    padding: 20px;
+    background-color: #fbfbfb;
+    border-radius: 8px;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+.action-icon{
+    margin-right: 15px;
+    padding: 5px;
+    border-radius: 8px;
+}
+
+.action-icon:hover{
+    cursor: pointer;
+    background-color: grey;
+}
+
+.action-icon:last-child{
+    margin-right: 0;
+}
+
+#input-new-entry-box{
+    width: 40%;
+    display: block;
+    margin: 0 auto;
+}
+
+#image-userAvatar {
+    width: 40px;
+    padding: 4px;
+    margin-left: 10px;
+    border-radius: 50%;
+    fill: #2d2d2d;
+    background-color: grey;
+}
+
+#div-toolbar{
+    width: 400px;
+    margin: 20px 20px 20px auto;
+    display: flex;
+    justify-content: space-between;
+    align-self: flex-end;
+}
+
+#input-search-box{
+    height: auto;
+    padding: 8px;
+}
