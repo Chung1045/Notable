@@ -1,5 +1,6 @@
 body{
     background-color: #fbfbfb;
+    font-family: "Inter", sans-serif;
 }
 #container {
     width: 100%;
@@ -33,6 +34,7 @@ body{
 
 #input-new-entry-box{
     width: 40%;
+    min-width: 400px;
     display: block;
     margin: 0 auto;
 }
@@ -58,3 +60,4 @@ body{
     height: auto;
     padding: 8px;
 }
+

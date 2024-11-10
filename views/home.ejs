@@ -35,10 +35,11 @@
 <div contenteditable="true" class="form-control form-control-lg input-textfield" id="input-new-entry-box"></div>
 <section id="section_noteEntry_container" style="opacity: 0">
     <div id="container">
-        <% for (let note of noteDatabase) { %>
+        <% for (let note of allnotes) {
+        console.log(note);%>
             <div class="card note-card" data-note-uuid="<%= note.noteUUID %>"> <!-- Changed to class note-card -->
                 <p contenteditable="true" class="note-entry"
-                   data-note-uuid="<%= note.noteUUID %>"><%= note.content %></p>
+                   data-note-uuid="<%= note.noteUUID %>"><%= note.noteContent %></p>
                 <div class="d-flex justify-content-end" id="div_container_action_button">
                     <i class="bi bi-trash action-icon" id="icon-delete" data-bs-toggle="tooltip"
                        title="Delete note entry"></i>

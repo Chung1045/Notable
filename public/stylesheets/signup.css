@@ -1,0 +1,32 @@
+body {
+    background-color: #f5f5f5;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Inter", sans-serif;
+}
+.signup-container {
+    width: 100%;
+    max-width: 475px;
+    padding: 2rem;
+    margin: auto auto;
+    background: white;
+    border-radius: 8px;
+    outline: 1px solid #4A4A4A;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.back-button {
+    color: #000;
+    text-decoration: none;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+.btn-google {
+    background-color: #808080;
+    color: white;
+}
+.divider {
+    border-top: 1px solid #dee2e6;
+    margin: 1rem 0;
+}
