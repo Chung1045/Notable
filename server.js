@@ -92,8 +92,7 @@ startServer()
                 }
                 const passwordcheck = await bcrypt.compare(req.body.password, check.userPassword);
                 if(passwordcheck){
-                    const authentication = {req.body.email};
-                    req.session.userId = authentication;
+                    req.session.userId = user._id;
                     res.render("home");
                 }else{
                     res.send("wrong password");
