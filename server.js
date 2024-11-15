@@ -75,6 +75,37 @@ startServer()
             res.render('login');
         });
 
+        app.post ('/login', async (req,res) => {
+    
+            try{
+                const check = await Userschema.findOne({userEmail: req.body.email});
+                if(|check){
+                    res.send("user cannot find")
+                }
+                const passwordcheck = await bcrypt.compare(req.body.password, check.userPassword);
+                if(passwordcheck){
+                    const entering = await Userschema.findOne({})
+                    res.render("home")；
+                }else{
+                    req.send("wrong password")；
+                }
+
+            }catch{
+                res.send("wrong detail");
+            }
+        });
+
+        app.get ('/logout', (res,req){
+
+            req.logout((err) => {
+                if(err){
+                    return next(err);
+
+                    }
+                res.redirect('/login')
+            })    
+        });
+
         app.get('/signup', (req, res) => {
             res.render('signup');
         });
