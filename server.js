@@ -104,17 +104,13 @@ startServer()
             }
         });
 
-        app.get ('/logout', (res,req){
-
-            req.logout((err) => {
-                if(err){
-                    return next(err);
-
-                    }
-                req.session.entering = false;
-                req.session.user = null;
-                res.redirect('/login')
-            })    
+        app.get('/logout', (req, res) => {
+            req.session.destroy(err => {
+                if (err) {
+                    return res.send("Error while logout");
+                }
+                res.redirect('/login'); // Redirect to login after logout
+            });
         });
 
         app.get('/signup', (req, res) => {
