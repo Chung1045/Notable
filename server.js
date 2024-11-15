@@ -92,8 +92,8 @@ startServer()
                 }
                 const passwordcheck = await bcrypt.compare(req.body.password, check.userPassword);
                 if(passwordcheck){
-                    req.session.entering = true;
-                    req.session.user = check;
+                    const authentication = await Userschema.findOne(userEmail);
+                    req.session.userId = authentication;
                     res.render("home");
                 }else{
                     res.send("wrong password");
@@ -101,6 +101,12 @@ startServer()
 
             }catch{
                 res.send("wrong detail");
+            }
+        });
+
+        app.get('/home', (req, res) =>{
+            if (!req.session.userId) {
+                return res.redirect('/login'); // Redirect to login if not authenticated
             }
         });
 
