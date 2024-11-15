@@ -22,6 +22,12 @@ app.use("/javascripts", express.static('public/javascripts'));
 app.use("/src", express.static('public/src'));
 app.use(express.urlencoded({extended: true}));
 
+app.use(session({
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: false,
+}));
+
 //Fake database part
 // function readJsonFileSync(filepath, encoding) {
 //
