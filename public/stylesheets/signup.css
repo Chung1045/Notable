@@ -16,7 +16,11 @@ body {
     outline: 1px solid #4A4A4A;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-.back-button {
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="submit"],
+.btn-back {
     color: #000;
     text-decoration: none;
     margin-bottom: 1rem;
@@ -26,7 +30,28 @@ body {
     background-color: #808080;
     color: white;
 }
+.btn-google:hover {
+    background-color: #909090
+}
+input[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+input[type="submit"]:hover {
+    background-color: #45a049;
+}
+h2 {
+        text-align: center;
+}
 .divider {
     border-top: 1px solid #dee2e6;
     margin: 1rem 0;
 }
+
+
+
+
+
