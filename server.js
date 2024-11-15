@@ -2,6 +2,7 @@ const path = require('path');
 const {v4: uuidv4} = require('uuid');
 const express = require('express');
 const session = require('express-session');
+const bcrypt = require('bcrypt');
 const fs = require('fs');
 const session = require('cookie-session');
 const mongoose = require('mongoose');
