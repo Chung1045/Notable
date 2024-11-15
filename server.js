@@ -84,7 +84,6 @@ startServer()
                 }
                 const passwordcheck = await bcrypt.compare(req.body.password, check.userPassword);
                 if(passwordcheck){
-                    const entering = await Userschema.findOne({})
                     res.render("home");
                 }else{
                     req.send("wrong password");
