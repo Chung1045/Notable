@@ -1,6 +1,7 @@
 const path = require('path');
 const {v4: uuidv4} = require('uuid');
 const express = require('express');
+const session = require('express-session');
 const fs = require('fs');
 const session = require('cookie-session');
 const mongoose = require('mongoose');
@@ -79,14 +80,16 @@ startServer()
     
             try{
                 const check = await Userschema.findOne({userEmail: req.body.email});
-                if(|check){
+                if(!check){
                     res.send("user cannot find")
                 }
                 const passwordcheck = await bcrypt.compare(req.body.password, check.userPassword);
                 if(passwordcheck){
+                    req.session.entering = true;
+                    req.session.user = check;
                     res.render("home");
                 }else{
-                    req.send("wrong password");
+                    res.send("wrong password");
                 }
 
             }catch{
@@ -101,6 +104,8 @@ startServer()
                     return next(err);
 
                     }
+                req.session.entering = false;
+                req.session.user = null;
                 res.redirect('/login')
             })    
         });
