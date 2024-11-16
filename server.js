@@ -118,9 +118,29 @@ startServer()
             });
         });
 
+        
+        let users = [];
+        
         app.get('/signup', (req, res) => {
             res.render('signup');
-        });
+            
+            const { name, email, password } = req.body;
+            if (!name){
+                return res.status(400).json({ message: 'Please provide name' });
+            }
+            if (!email){
+                return res.status(400).json({ message: 'Please provide email' });
+            }
+            if (!password){
+                return res.status(400).json({ message: 'Please provide password' });
+            }
+            const newUser = {
+                name,
+                email,
+                password
+            };
+        };
+    });
 
         // For testing purpose
         app.get('/accountInfoFlyout', (req, res) => {
