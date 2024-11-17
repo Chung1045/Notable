@@ -123,6 +123,22 @@ startServer()
         
         app.get('/signup', (req, res) => {
             res.render('signup');
+
+        app.post('/register', (req, res) => {
+            const userName = req.body.name;
+            const userEmail = req.body.email;
+            const userPassword = req.body.Password;
+            
+            User.insertMany(userData, (err, savedUsers) => {
+                if (err) {
+                    console.error('Error saving users:', err);
+                    res.status(500).send('Error saving users');
+                } else {
+                    console.log('Users saved successfully:', savedUsers);
+                    res.status(200).send('Users saved successfully');
+                }
+            });
+        });
             
             const { name, email, password } = req.body;
             if (!name){
