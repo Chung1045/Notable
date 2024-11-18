@@ -3,8 +3,6 @@ const {v4: uuidv4} = require('uuid');
 const express = require('express');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
-const fs = require('fs');
-const session = require('cookie-session');
 const mongoose = require('mongoose');
 const app = express();
 
@@ -27,24 +25,6 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
 }));
-
-//Fake database part
-// function readJsonFileSync(filepath, encoding) {
-//
-//     if (typeof (encoding) == 'undefined') {
-//         encoding = 'utf8';
-//     }
-//     var file = fs.readFileSync(filepath, encoding);
-//     return JSON.parse(file);
-// }
-//
-// function getConfig(file) {
-//
-//     var filepath = __dirname + '/' + file;
-//     return readJsonFileSync(filepath);
-// }
-//
-// noteDatabase = getConfig('public/data/fakeDatabase.json');
 
 async function startServer() {
     try {
@@ -72,10 +52,10 @@ startServer()
             try {
                 const allnotes = await noteEntry.find().exec();
 
-                res.render('home', { allnotes });
+                res.render('home', {allnotes});
             } catch (error) {
                 console.error('Error fetching notes:', error);
-                res.status(500).render('error', { error: 'Failed to fetch notes' });
+                res.status(500).render('error', {error: 'Failed to fetch notes'});
             }
         });
 
@@ -83,29 +63,37 @@ startServer()
             res.render('login');
         });
 
-        app.post ('/login', async (req,res) => {
-    
-            try{
+        app.post('/login', async (req, res) => {
+
+            try {
                 const check = await Userschema.findOne({userEmail: req.body.email});
-                if(!check){
+                if (!check) {
                     res.send("user cannot find")
                 }
                 const passwordcheck = await bcrypt.compare(req.body.password, check.userPassword);
-                if(passwordcheck){
+                if (passwordcheck) {
                     req.session.userId = user._id;
                     res.render("home");
-                }else{
+                } else {
                     res.send("wrong password");
                 }
 
-            }catch{
+            } catch {
                 res.send("wrong detail");
             }
         });
 
-        app.get('/home', (req, res) =>{
+        app.get('/home', async (req, res) => {
             if (!req.session.userId) {
                 return res.redirect('/login'); // Redirect to login if not authenticated
+            }
+            try {
+                const allnotes = await noteEntry.find().exec();
+
+                res.render('home', {allnotes});
+            } catch (error) {
+                console.error('Error fetching notes:', error);
+                res.status(500).render('error', {error: 'Failed to fetch notes'});
             }
         });
 
@@ -118,17 +106,30 @@ startServer()
             });
         });
 
-        
+
         let users = [];
-        
+
         app.get('/signup', (req, res) => {
             res.render('signup');
+        });
 
         app.post('/register', (req, res) => {
             const userName = req.body.name;
             const userEmail = req.body.email;
             const userPassword = req.body.Password;
-            
+
+            const {name, email, password} = req.body;
+            if (!name || !email || !password) {
+                // use one res.status statement to send back error to prevent this error "Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client"
+                return res.status(400).json({message: 'Please input all field'});
+            }
+
+            const newUser = {
+                name,
+                email,
+                password
+            };
+
             User.insertMany(userData, (err, savedUsers) => {
                 if (err) {
                     console.error('Error saving users:', err);
@@ -139,137 +140,12 @@ startServer()
                 }
             });
         });
-            
-            const { name, email, password } = req.body;
-            if (!name){
-                return res.status(400).json({ message: 'Please provide name' });
-            }
-            if (!email){
-                return res.status(400).json({ message: 'Please provide email' });
-            }
-            if (!password){
-                return res.status(400).json({ message: 'Please provide password' });
-            }
-            const newUser = {
-                name,
-                email,
-                password
-            };
-        };
-    });
 
         // For testing purpose
         app.get('/accountInfoFlyout', (req, res) => {
             res.render('accountInfoFlyout');
         });
         console.log(Date.now());
-
-        // Sample, have already insert
-        // user.insertMany([
-        //     {
-        //         userUUID: '13b078f5-62f4-47c4-a85c-5c86c7ea17a2',
-        //         userName: 'john_doe',
-        //         userEmail: 'john.doe@example.com',
-        //         userPassword: 'hashedpassword1',
-        //         userAuthenticateType: 'local'
-        //     },
-        //     {
-        //         userUUID: '7c20fef9-4d06-4370-945a-5258363e0ea7',
-        //         userName: 'jane_smith',
-        //         userEmail: 'jane.smith@example.com',
-        //         userPassword: 'hashedpassword2',
-        //         userAuthenticateType: 'local'
-        //     },
-        //     {
-        //         userUUID: '70667a75-7ff5-46e3-ab17-a2d6edbb4acf',
-        //         userName: 'alice_brown',
-        //         userEmail: 'alice.brown@example.com',
-        //         userPassword: 'hashedpassword3',
-        //         userAuthenticateType: 'local'
-        //     },
-        //     {
-        //         userUUID: 'e298f48f-b3b8-4053-a4db-4f5c88b6b868',
-        //         userName: 'bob_jones',
-        //         userEmail: 'bob.jones@example.com',
-        //         userPassword: 'hashedpassword4',
-        //         userAuthenticateType: 'local'
-        //     },
-        //     {
-        //         userUUID: '910fe5fc-d95f-4427-9534-d0264b34516c',
-        //         userName: 'charlie_white',
-        //         userEmail: 'charlie.white@example.com',
-        //         userPassword: 'hashedpassword5',
-        //         userAuthenticateType: 'local'
-        //     }
-        // ]).then(r => {
-        //     console.log('Users inserted into database\n', r);
-        //
-        // });
-
-        //Already inserted
-        // noteEntry.insertMany([
-        //     {
-        //         noteUUID: uuidv4(),
-        //         noteContent: 'This is a short note about today\'s meeting.',
-        //         noteUserUUID: '910fe5fc-d95f-4427-9534-d0264b34516c',
-        //         noteLastModified: Date.now()
-        //     },
-        //     {
-        //         noteUUID: uuidv4(),
-        //         noteContent: 'Today was a productive day. We finalized the project requirements and planned out the sprint cycles.',
-        //         noteUserUUID: 'e298f48f-b3b8-4053-a4db-4f5c88b6b868',
-        //         noteLastModified: Date.now()
-        //     },
-        //     {
-        //         noteUUID: uuidv4(),
-        //         noteContent: 'First paragraph: Had an important client meeting today. Discussed the key deliverables and timeline.\n\nSecond paragraph: Overall, the meeting was successful, and we have a clearer understanding of the next steps.',
-        //         noteUserUUID: 'e298f48f-b3b8-4053-a4db-4f5c88b6b868',
-        //         noteLastModified: Date.now()
-        //     },
-        //     {
-        //         noteUUID: uuidv4(),
-        //         noteContent: 'This is a brief note summarizing the latest updates from the team.',
-        //         noteUserUUID: 'e298f48f-b3b8-4053-a4db-4f5c88b6b868',
-        //         noteLastModified: Date.now()
-        //     },
-        //     {
-        //         noteUUID: uuidv4(),
-        //         noteContent: 'First paragraph: The code review went smoothly, and we identified a few areas of improvement.\n\nSecond paragraph: We need to refactor some parts of the codebase for better scalability and maintainability.',
-        //         noteUserUUID: '70667a75-7ff5-46e3-ab17-a2d6edbb4acf',
-        //         noteLastModified: Date.now()
-        //     },
-        //     {
-        //         noteUUID: uuidv4(),
-        //         noteContent: 'Today\'s to-do list: complete documentation, review design mockups, and deploy to staging.',
-        //         noteUserUUID: '70667a75-7ff5-46e3-ab17-a2d6edbb4acf',
-        //         noteLastModified: Date.now()
-        //     },
-        //     {
-        //         noteUUID: uuidv4(),
-        //         noteContent: 'Had a quick team sync today. Everyone is on track with their tasks, and we\'re ready for the next sprint.',
-        //         noteUserUUID: '70667a75-7ff5-46e3-ab17-a2d6edbb4acf',
-        //         noteLastModified: Date.now()
-        //     },
-        //     {
-        //         noteUUID: uuidv4(),
-        //         noteContent: 'First paragraph: The testing phase went well, with only a few minor bugs reported.\n\nSecond paragraph: We are confident that the product will be ready for the final release by the end of this week.',
-        //         noteUserUUID: '70667a75-7ff5-46e3-ab17-a2d6edbb4acf',
-        //         noteLastModified: Date.now()
-        //     },
-        //     {
-        //         noteUUID: uuidv4(),
-        //         noteContent: 'Reminder: Don\'t forget to send the client the updated proposal by Friday.',
-        //         noteUserUUID: '70667a75-7ff5-46e3-ab17-a2d6edbb4acf',
-        //         noteLastModified: Date.now()
-        //     },
-        //     {
-        //         noteUUID: uuidv4(),
-        //         noteContent: 'First paragraph: The new feature implementation is progressing well. The team has completed the core functionality.\n\nSecond paragraph: Next steps involve testing and integrating it with the existing platform.',
-        //         noteUserUUID: '70667a75-7ff5-46e3-ab17-a2d6edbb4acf',
-        //         noteLastModified: Date.now()
-        //     }
-        // ]).then(r => console.log('Note entries inserted into database\n', r));
-
 
     });
 
