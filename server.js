@@ -127,7 +127,7 @@ startServer()
         app.post('/register', (req, res) => {
             const userName = req.body.name;
             const userEmail = req.body.email;
-            const userPassword = req.body.Password;
+            const userPassword = req.body.password;
             
             User.insertMany(userData, (err, savedUsers) => {
                 if (err) {
@@ -151,9 +151,9 @@ startServer()
                 return res.status(400).json({ message: 'Please provide password' });
             }
             const newUser = {
-                name,
-                email,
-                password
+                userName,
+                userEmail,
+                userPassword
             };
         };
     });
