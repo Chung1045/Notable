@@ -1,6 +1,8 @@
 const path = require('path');
 const {v4: uuidv4} = require('uuid');
 const express = require('express');
+const session = require('express-session');
+const bcrypt = require('bcrypt');
 const fs = require('fs');
 const session = require('cookie-session');
 const mongoose = require('mongoose');
@@ -19,6 +21,12 @@ app.use("/stylesheets", express.static('public/stylesheets'));
 app.use("/javascripts", express.static('public/javascripts'));
 app.use("/src", express.static('public/src'));
 app.use(express.urlencoded({extended: true}));
+
+app.use(session({
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: false,
+}));
 
 //Fake database part
 // function readJsonFileSync(filepath, encoding) {
@@ -75,9 +83,80 @@ startServer()
             res.render('login');
         });
 
+        app.post ('/login', async (req,res) => {
+    
+            try{
+                const check = await Userschema.findOne({userEmail: req.body.email});
+                if(!check){
+                    res.send("user cannot find")
+                }
+                const passwordcheck = await bcrypt.compare(req.body.password, check.userPassword);
+                if(passwordcheck){
+                    req.session.userId = user._id;
+                    res.render("home");
+                }else{
+                    res.send("wrong password");
+                }
+
+            }catch{
+                res.send("wrong detail");
+            }
+        });
+
+        app.get('/home', (req, res) =>{
+            if (!req.session.userId) {
+                return res.redirect('/login'); // Redirect to login if not authenticated
+            }
+        });
+
+        app.get('/logout', (req, res) => {
+            req.session.destroy(err => {
+                if (err) {
+                    return res.send("Error while logout");
+                }
+                res.redirect('/login'); // Redirect to login after logout
+            });
+        });
+
+        
+        let users = [];
+        
         app.get('/signup', (req, res) => {
             res.render('signup');
+
+        app.post('/register', (req, res) => {
+            const userName = req.body.name;
+            const userEmail = req.body.email;
+            const userPassword = req.body.Password;
+            
+            User.insertMany(userData, (err, savedUsers) => {
+                if (err) {
+                    console.error('Error saving users:', err);
+                    res.status(500).send('Error saving users');
+                } else {
+                    console.log('Users saved successfully:', savedUsers);
+                    res.status(200).send('Users saved successfully');
+                }
+            });
         });
+            
+            const { name, email, password } = req.body;
+            if (!name){
+                return res.status(400).json({ message: 'Please provide name' });
+            }
+            if (!email){
+                return res.status(400).json({ message: 'Please provide email' });
+            }
+            if (!password){
+                return res.status(400).json({ message: 'Please provide password' });
+            }
+            const newUser = {
+                name,
+                email,
+                password
+            };
+        };
+    });
 
         // For testing purpose
         app.get('/accountInfoFlyout', (req, res) => {

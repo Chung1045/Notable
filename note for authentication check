@@ -1,0 +1,4 @@
+//Back to login if no authentication, can adjust the path of /login to others( For note searching)
+if (!req.session.userId) {
+        return res.redirect('/login'); 
+    }
