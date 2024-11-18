@@ -128,6 +128,16 @@ startServer()
             const userName = req.body.name;
             const userEmail = req.body.email;
             const userPassword = req.body.password;
+
+            if (!userName){
+                return res.status(400).json({ message: 'Please provide name' });
+            }
+            if (!userEmail){
+                return res.status(400).json({ message: 'Please provide email' });
+            }
+            if (!userPassword){
+                return res.status(400).json({ message: 'Please provide password' });
+            }
             
             User.insertMany(userData, (err, savedUsers) => {
                 if (err) {
@@ -139,17 +149,6 @@ startServer()
                 }
             });
         });
-            
-            const { name, email, password } = req.body;
-            if (!name){
-                return res.status(400).json({ message: 'Please provide name' });
-            }
-            if (!email){
-                return res.status(400).json({ message: 'Please provide email' });
-            }
-            if (!password){
-                return res.status(400).json({ message: 'Please provide password' });
-            }
             const newUser = {
                 userName,
                 userEmail,
