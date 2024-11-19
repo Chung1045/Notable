@@ -4,6 +4,7 @@ const express = require('express');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
+const noteEntrySchema = require('./models/noteEntrySchema');
 const app = express();
 
 const mongoDBURI = "mongodb+srv://server:wCBOhlZO9qwx5fGq@notable.4ntdo.mongodb.net/?retryWrites=true&w=majority&appName=Notable";
@@ -80,6 +81,23 @@ startServer()
 
             } catch {
                 res.send("wrong detail");
+            }
+        });
+
+        app.post('/api/notes', async (req, res) => {
+            try {
+                const newNote = new noteEntry({
+                    noteUUID: uuidv4(), // Generate a new UUID for the note
+                    noteContent: req.body.content,
+                    noteUserUUID: req.body.userUUID, // Assuming you are sending the user UUID
+                    noteLastModified: new Date().toISOString()
+                });
+
+                await newNote.save();
+                res.status(201).json({ noteUUID: newNote.noteUUID, content: newNote.noteContent });
+            } catch (error) {
+                console.error('Error creating note:', error);
+                res.status(500).send('Server error');
             }
         });
 
