@@ -141,6 +141,33 @@ startServer()
             });
         });
 
+        app.put('/api/notes/:id', async (req, res) => {
+            try{
+                const updatedNote = await noteEntry.findByIdAndUpdate(req.params.id, req.body, { new: true });
+                if (!updatedNote) {
+                    return res.status(404).send('Note not found');
+                }
+                res.send(updatedNote);
+                } catch (error) {
+                console.error('Error occured while updating the note:', error);
+                res.status(500).send('Updation of the note was unsuccessful');
+            }
+        });
+        
+        app.delete('/api/notes/:id', async (req, res) => {
+            try {
+                const deletedNote = await noteEntry.findByIdAndDelete(req.params.id);
+                if (!deletedNote) {
+                    return res.status(404).send('Note not found');
+                }
+                res.send(deletedNote);
+            } catch (error) {
+                console.error('Error occured while deleting the note:', error);
+                res.status(500).send('Deletion of the note was unsuccessful');
+            }
+        });
+                
+
         // For testing purpose
         app.get('/accountInfoFlyout', (req, res) => {
             res.render('accountInfoFlyout');
