@@ -1,11 +1,20 @@
 $(document).ready(function () {
     $(".btn-login").on("click", function (event) {
         event.preventDefault();
+
+        $("userEmail-error").text("");
+        $("userPassword-error").text("");
+        $("#field-userEmail").removeClass("is-invalid");
+        $("#field-password").removeClass("is-invalid");
         let userEmail = $("#field-userEmail").val();
         let userPassword = $("#field-password").val();
 
         if (!userEmail || !userPassword) {
             showAlert("Please fill in all fields", "danger");
+            $("#field-userEmail").addClass("is-invalid");
+            $("#userEmail-error").text("Please fill in this field");
+            $("#field-password").addClass("is-invalid");
+            $("#userPassword-error").text("Please fill in this field");
             return;
         }
 
@@ -30,6 +39,10 @@ $(document).ready(function () {
                     ? xhr.responseJSON.message
                     : "An error occurred. Please try again.";
                 showAlert(errorMessage, 'danger');
+                $("#field-userEmail").addClass("is-invalid");
+                $("#userEmail-error").text(errorMessage);
+                $("#field-password").addClass("is-invalid");
+                $("#userPassword-error").text(errorMessage);
             }
         });
     });

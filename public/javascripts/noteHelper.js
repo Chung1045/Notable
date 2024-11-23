@@ -86,7 +86,6 @@ $(document).ready(function () {
     });
 
     function doneTyping(searchTerm) {
-        console.log("User stopped typing. Search term:", searchTerm);
         clearLayout();
         if (searchTerm) {
             $('#search-results').text(`Searching for: ${searchTerm}`).show();
@@ -216,7 +215,6 @@ $(document).ready(function () {
             type: 'DELETE',
             contentType: 'application/json',
             success: function (response) {
-                console.log('Note deleted successfully:', response);
                 $(`[data-note-uuid="${noteUUID}"]`).remove();
                 checkNoteCount();
                 alert('Note deleted successfully');
@@ -244,8 +242,6 @@ $(document).ready(function () {
             data: JSON.stringify({ keyword: searchTerm }),
             success: function(response) {
                 if (response.success) {
-                    console.log(`Received ${response.notes.length} notes from server`);
-                    console.log(response);
                     renderNoteCards(response.notes);
                 } else {
                     console.error('Error searching notes:', response.message);
@@ -279,7 +275,7 @@ $(document).ready(function () {
             $('#search-results').hide();
             notes.forEach(note => {
                 const newNoteHtml = `
-                <div class="card note-card" data-note-uuid="${note._id}">
+                <div class="card note-card" data-note-uuid="${note.noteUUID}">
                     <p contenteditable="true" class="note-entry" data-note-uuid="${note.noteUUID}">${note.noteContent}</p>
                     <div class="d-flex justify-content-end" id="div_container_action_button">
                         <i class="bi bi-trash action-icon" id="icon-delete" data-bs-toggle="tooltip" title="Delete note entry"></i>
@@ -300,7 +296,6 @@ $(document).ready(function () {
     // Add functionality to create a note
     $('#btn-create-note').on("click", function () {
         const noteContent = $('#input-new-entry-box').text().trim();
-        console.log("Note content: ", noteContent);
 
         if (noteContent) {
             $.ajax({

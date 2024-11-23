@@ -34,21 +34,23 @@
         <form>
             <div class="mb-3">
                 <label for="field-userName">Username</label>
-                <input type="text" name="name" class="form-control" placeholder="Name" id="field-userName" required>
+                <input type="text" name="name" class="form-control" id="field-userName" required>
             </div>
             <div class="mb-3">
                 <label for="field-email">Email</label>
-                <input type="text" name="email" class="form-control" placeholder="Email" id="field-email" required>
+                <input type="text" name="email" class="form-control" id="field-email" required>
             </div>
             <div class="mb-3">
                 <label for="field-password">Password</label>
-                <input type="password" name="password" class="form-control" placeholder="Password" id="field-password"
+                <input type="password" name="password" class="form-control" id="field-password"
                        required>
+                <div class="invalid-feedback" id="userPassword-error"></div>
             </div>
             <div class="mb-3">
                 <label for="field-confirmPassword">Confirm Password</label>
-                <input type="password" name="confirm-password" class="form-control" placeholder="Password"
+                <input type="password" name="confirm-password" class="form-control"
                        id="field-confirmPassword" required>
+                <div class="invalid-feedback" id="userConfirmPassword-error"></div>
             </div>
             <div class="d-grid gap-2">
                 <button class="btn btn-dark" id="btn-register">Register</button>

@@ -69,9 +69,6 @@ startServer()
             try {
                 const { userEmail, userPassword } = req.body;
 
-                // Log the received data (remove in production)
-                console.log('Login attempt:', { userEmail, userPassword: '****' });
-
                 const user = await User.findOne({ userEmail: userEmail });
                 if (!user) {
                     console.log('User not found:', userEmail);
@@ -81,10 +78,8 @@ startServer()
                 const isPasswordValid = await bcrypt.compare(userPassword, user.userPassword);
                 if (isPasswordValid) {
                     req.session.userId = user.userUUID;
-                    console.log('Login successful for user:', userEmail);
                     res.status(200).json({ success: true, message: 'Login successful' });
                 } else {
-                    console.log('Invalid password for user:', userEmail);
                     res.status(400).json({ success: false, message: 'Check credentials again' });
                 }
             } catch (error) {
@@ -95,8 +90,6 @@ startServer()
 
         app.post('/api/notes', async (req, res) => {
             try {
-                console.log('Received note creation request:', req.body);
-                console.log('From user id:', req.session.userId);
                 let newNoteID = uuidv4();
                 const newNote = new noteEntry({
                     noteUUID: newNoteID, // Generate a new UUID for the note
@@ -135,16 +128,12 @@ startServer()
             });
         });
 
-
-        let users = [];
-
         app.get('/signup', (req, res) => {
             res.render('signup');
         });
 
         app.post('/api/register', async (req, res) => {
             const { userName, userEmail, userPassword } = req.body;
-            console.log('Received registration data:', userName, userEmail, userPassword);
 
             if (!userName || !userEmail || !userPassword) {
                 return res.status(400).json({ message: 'Please input all fields' });
@@ -187,12 +176,7 @@ startServer()
             }
 
             try {
-                console.log('Session userId:', req.session.userId);
-
-                // Fetch user from database
                 const user = await User.findOne({ userUUID: req.session.userId });
-
-                console.log('Found user:', user);
 
                 if (!user) {
                     return res.status(404).json({ error: 'User not found' });
@@ -290,8 +274,6 @@ startServer()
                     return res.status(401).json({ success: false, message: 'User not authenticated' });
                 }
 
-                console.log(keyword);
-
                 let notes;
                 if (keyword === '' || keyword === undefined || keyword === null) {
                     // Return all user notes
@@ -303,8 +285,6 @@ startServer()
                         noteContent: { $regex: keyword, $options: 'i' }
                     }).sort({ updatedAt: -1 });
                 }
-
-                console.log(`Found ${notes.length} notes for user ${userId} with keyword "${keyword}"`);
 
                 res.json({ success: true, notes: notes });
             } catch (error) {

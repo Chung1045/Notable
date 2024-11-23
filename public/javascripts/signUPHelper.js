@@ -2,6 +2,13 @@ $(document).ready(function(){
     $("form").on("submit", function(event){
         event.preventDefault(); // Prevent form submission
 
+        $("#field-userName").removeClass("is-invalid");
+        $("#field-email").removeClass("is-invalid");
+        $("#field-password").removeClass("is-invalid");
+        $("#field-confirmPassword").removeClass("is-invalid");
+
+        $("#userPassword-error").text("");
+        $("#userConfirmPassword-error").text("");
         let userName = $('#field-userName').val().trim();
         let userEmail = $("#field-email").val().trim();
         let userPassword = $("#field-password").val();
@@ -11,11 +18,18 @@ $(document).ready(function(){
 
         if (!userName || !userEmail || !userPassword || !confirmPassword) {
             showAlert("Please fill in all fields", "danger");
-            return;
+            $("#field-userName").addClass("is-invalid");
+            $("#field-email").addClass("is-invalid");
+            $("#field-password").addClass("is-invalid");
+            $("#field-confirmPassword").addClass("is-invalid");
         }
 
         if (userPassword !== confirmPassword) {
             showAlert("Passwords do not match", "danger");
+            $("#field-password").addClass("is-invalid");
+            $("#field-confirmPassword").addClass("is-invalid");
+            $("#userPassword-error").text("Passwords do not match");
+            $("#userConfirmPassword-error").text("Passwords do not match");
             return;
         }
 

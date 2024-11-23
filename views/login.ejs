@@ -34,11 +34,13 @@
         <form>
             <div class="mb-3">
                 <label for="field-userEmail">Email</label>
-                <input type="email" name="email" class="form-control" placeholder="Email address" id="field-userEmail" required>
+                <input type="email" name="email" class="form-control" id="field-userEmail" required>
+                <div class="invalid-feedback" id="userEmail-error"></div>
             </div>
             <div class="mb-3">
                 <label for="field-password">Password</label>
-                <input type="password" name="password" class="form-control" placeholder="Password" id="field-password" required>
+                <input type="password" name="password" class="form-control" id="field-password" required>
+                <div class="invalid-feedback" id="userPassword-error"></div>
             </div>
             <div class="mb-3">
                 <a href="#" class="text-decoration-none">Forgot Credentials?</a>
