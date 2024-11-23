@@ -44,7 +44,7 @@ async function startServer() {
 
 startServer()
     .then(() => {
-        const user = mongoose.model('User', userSchema);
+        const User = mongoose.model('User', userSchema);
         const noteEntry = mongoose.model('NoteEntry', noteEntrySchema);
         console.log("The generated random UUID is " + uuidv4());
 
@@ -64,22 +64,22 @@ startServer()
         });
 
         app.post('/login', async (req, res) => {
-
             try {
-                const check = await Userschema.findOne({userEmail: req.body.email});
-                if (!check) {
-                    res.send("user cannot find")
+                const { email, password } = req.body;
+                const user = await User.findOne({ userEmail: email });
+                if (!user) {
+                    return res.status(400).json({ message: 'User not found' });
                 }
-                const passwordcheck = await bcrypt.compare(req.body.password, check.userPassword);
-                if (passwordcheck) {
-                    req.session.userId = user._id;
-                    res.render("home");
+                const isPasswordValid = await bcrypt.compare(password, user.userPassword);
+                if (isPasswordValid) {
+                    req.session.userId = user.userUUID;
+                    res.json({ message: 'Login successful' });
                 } else {
-                    res.send("wrong password");
+                    res.status(400).json({ message: 'Invalid password' });
                 }
-
-            } catch {
-                res.send("wrong detail");
+            } catch (error) {
+                console.error('Login error:', error);
+                res.status(500).json({ message: 'An error occurred during login' });
             }
         });
 
@@ -113,32 +113,39 @@ startServer()
             res.render('signup');
         });
 
-        app.post('/register', (req, res) => {
-            const userName = req.body.name;
-            const userEmail = req.body.email;
-            const userPassword = req.body.Password;
+        app.post('/register', async (req, res) => {
+            const { name, email, password } = req.body;
 
-            const {name, email, password} = req.body;
             if (!name || !email || !password) {
-                // use one res.status statement to send back error to prevent this error "Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client"
-                return res.status(400).json({message: 'Please input all field'});
+                return res.status(400).json({ message: 'Please input all fields' });
             }
 
-            const newUser = {
-                name,
-                email,
-                password
-            };
-
-            User.insertMany(userData, (err, savedUsers) => {
-                if (err) {
-                    console.error('Error saving users:', err);
-                    res.status(500).send('Error saving users');
-                } else {
-                    console.log('Users saved successfully:', savedUsers);
-                    res.status(200).send('Users saved successfully');
+            try {
+                // Check if user already exists
+                const existingUser = await User.findOne({ userEmail: email });
+                if (existingUser) {
+                    return res.status(400).json({ message: 'Email already in use' });
                 }
-            });
+
+                // Hash the password
+                const saltRounds = 10;
+                const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+                const newUser = new User({
+                    userUUID: uuidv4(),
+                    userName: name,
+                    userEmail: email,
+                    userPassword: hashedPassword,
+                    userAuthenticateType: "local"
+                });
+
+                await newUser.validate();
+                await newUser.save();
+                return res.status(200).json({ message: 'User registered successfully' });
+            } catch (error) {
+                console.error('Error saving new user data:', error);
+                return res.status(500).json({ message: 'Error registering new user' });
+            }
         });
 
         // For testing purpose

@@ -69,3 +69,7 @@ input[type="submit"]:hover {
     background-color: #c92c1e;
 }
 
+label{
+    margin-bottom: 5px;
+}
+

@@ -30,16 +30,23 @@
             <i class="bi bi-arrow-left fs-3"></i>
         </a>
         <h2 class="mb-4">Sign Up</h2>
-        <p>Please fill in all the field</p>
+        <p>*Please fill in all the field</p>
         <form action="/register" method="POST">
             <div class="mb-3">
-                <input type="text" name="name" class="form-control" placeholder="Name" required>
+                <label for="field-userName">Username</label>
+                <input type="text" name="name" class="form-control" placeholder="Name" id="field-userName" required>
             </div>
             <div class="mb-3">
-                <input type="text" name="email" class="form-control" placeholder="Email" required>
+                <label for="field-email">Email</label>
+                <input type="text" name="email" class="form-control" placeholder="Email" id="field-email" required>
             </div>
             <div class="mb-3">
-                <input type="text" name="password" class="form-control" placeholder="Password" required>
+                <label for="field-password">Password</label>
+                <input type="password" name="password" class="form-control" placeholder="Password" id="field-password" required>
+            </div>
+            <div class="mb-3">
+                <label for="field-confirmPassword">Confirm Password</label>
+                <input type="password" name="confirm-password" class="form-control" placeholder="Password" id="field-confirmPassword" required>
             </div>
             <div class="d-grid gap-2">
                 <button type="submit" class="btn btn-dark">Register</button>
