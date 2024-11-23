@@ -31,11 +31,14 @@ $(document).ready(function() {
 
     function initNewNoteBox() {
         const editableDiv = $('#input-new-entry-box');
+        const createButton = $('#btn-create-note');
+        const fadeDuration = 200; // Duration of fade effect in milliseconds
 
         function setPlaceholder() {
             if (editableDiv.text().trim() === '') {
                 editableDiv.addClass('placeholder');
                 editableDiv.text('Write a new note...');
+                createButton.fadeOut(fadeDuration);
             }
         }
 
@@ -43,6 +46,18 @@ $(document).ready(function() {
             if (editableDiv.hasClass('placeholder')) {
                 editableDiv.text('');
                 editableDiv.removeClass('placeholder');
+            }
+        }
+
+        function toggleCreateButton() {
+            if (editableDiv.text().trim() !== '' && !editableDiv.hasClass('placeholder')) {
+                if (!createButton.is(':visible')) {
+                    createButton.fadeIn(fadeDuration);
+                }
+            } else {
+                if (createButton.is(':visible')) {
+                    createButton.fadeOut(fadeDuration);
+                }
             }
         }
 
@@ -59,6 +74,12 @@ $(document).ready(function() {
             if (editableDiv.text().trim() === '') {
                 setPlaceholder();
             }
+            toggleCreateButton();
+        });
+
+        // Check content on input
+        editableDiv.on('input', function () {
+            toggleCreateButton();
         });
     }
 
@@ -77,7 +98,7 @@ $(document).ready(function() {
                 }),
                 success: function(response) {
                     // Update the UI to display the newly created note
-                    $('#container').append(`
+                    $('#container').prepend(`
                         <div class="card note-card" data-note-uuid="${response.noteUUID}">
                             <p contenteditable="true" class="note-entry" data-note-uuid="${response.noteUUID}">${response.content}</p>
                             <div class="d-flex justify-content-end" id="div_container_action_button">
@@ -85,6 +106,7 @@ $(document).ready(function() {
                             </div>
                         </div>
                     `);
+                    $grid.layout();
                     $('#input-new-entry-box').text(''); // Clear the input box
                 },
                 error: function(error) {

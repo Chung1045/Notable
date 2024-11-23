@@ -10,7 +10,6 @@ const app = express();
 const mongoDBURI = "mongodb+srv://server:wCBOhlZO9qwx5fGq@notable.4ntdo.mongodb.net/?retryWrites=true&w=majority&appName=Notable";
 
 const userSchema = require('./models/userSchema');
-const noteEntrySchema = require('./models/noteEntrySchema');
 
 const port = 6950;
 app.set('view engine', 'ejs');
