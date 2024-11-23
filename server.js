@@ -19,15 +19,14 @@ app.use("/stylesheets", express.static('public/stylesheets'));
 app.use("/javascripts", express.static('public/javascripts'));
 app.use("/src", express.static('public/src'));
 app.use(express.urlencoded({extended: true}));
-
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 
 app.use(session({
     secret: 'your_secret_key',
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true
 }));
 
 async function startServer() {
@@ -46,21 +45,21 @@ async function startServer() {
     }
 }
 
+const requireAuth = (req, res, next) => {
+    if (!req.session || !req.session.userId) {
+        return res.redirect('/login');
+    }
+    next();
+};
+
 startServer()
     .then(() => {
         const User = mongoose.model('User', userSchema);
         const noteEntry = mongoose.model('NoteEntry', noteEntrySchema);
         console.log("The generated random UUID is " + uuidv4());
 
-        app.get('/', async (req, res) => {
-            try {
-                const allnotes = await noteEntry.find().exec();
-
-                res.render('home', {allnotes});
-            } catch (error) {
-                console.error('Error fetching notes:', error);
-                res.status(500).render('error', {error: 'Failed to fetch notes'});
-            }
+        app.get('/', requireAuth, async (req, res) => {
+            res.redirect('/home');
         });
 
         app.get('/login', (req, res) => {
@@ -95,17 +94,36 @@ startServer()
             }
         });
 
-        app.get('/home', async (req, res) => {
-            if (!req.session.userId) {
-                return res.redirect('/login'); // Redirect to login if not authenticated
-            }
+        app.post('/api/notes', async (req, res) => {
             try {
-                const allnotes = await noteEntry.find().exec();
+                console.log('Received note creation request:', req.body);
+                console.log('From user id:', req.session.userId);
+                let newNoteID = uuidv4();
+                const newNote = new noteEntry({
+                    noteUUID: newNoteID, // Generate a new UUID for the note
+                    noteContent: req.body.content,
+                    noteUserUUID: req.session.userId, // Assuming you are sending the user UUID
+                    noteLastModified: new Date().toISOString()
+                });
+                await newNote.validate();
+                await newNote.save();
+                res.status(200).json({ success: true, message: 'New note created.', noteUUID: newNoteID });
+            } catch (error) {
+                console.error('Error creating note:', error);
+                res.status(500).json({ success: false, message: 'An error occurred while creating the note. Please try again later:\n' + error });
+            }
+        });
 
-                res.render('home', {allnotes});
+        app.get('/home', requireAuth, async (req, res) => {
+            try {
+                const userNotes = await noteEntry.find({ noteUserUUID: req.session.userId })
+                    .sort({ noteLastModified: -1 })
+                    .exec();
+
+                res.render('home', { allnotes: userNotes });
             } catch (error) {
                 console.error('Error fetching notes:', error);
-                res.status(500).render('error', {error: 'Failed to fetch notes'});
+                res.status(500).render('error', { error: 'Failed to fetch notes' });
             }
         });
 
