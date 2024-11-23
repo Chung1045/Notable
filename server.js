@@ -20,6 +20,10 @@ app.use("/javascripts", express.static('public/javascripts'));
 app.use("/src", express.static('public/src'));
 app.use(express.urlencoded({extended: true}));
 
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
+
 app.use(session({
     secret: 'your_secret_key',
     resave: false,
@@ -113,34 +117,37 @@ startServer()
             res.render('signup');
         });
 
-        app.post('/register', async (req, res) => {
-            const { name, email, password } = req.body;
+        app.post('/api/register', async (req, res) => {
+            const { userName, userEmail, userPassword } = req.body;
+            console.log('Received registration data:', userName, userEmail, userPassword);
 
-            if (!name || !email || !password) {
+            if (!userName || !userEmail || !userPassword) {
                 return res.status(400).json({ message: 'Please input all fields' });
             }
 
             try {
                 // Check if user already exists
-                const existingUser = await User.findOne({ userEmail: email });
-                if (existingUser) {
-                    return res.status(400).json({ message: 'Email already in use' });
+                const userExists = await User.findOne({ $or: [{ userName: userName }, { userEmail: userEmail }] });
+                if (userExists) {
+                    return res.status(400).json({ message: 'Username or email already in use' });
                 }
 
                 // Hash the password
                 const saltRounds = 10;
-                const hashedPassword = await bcrypt.hash(password, saltRounds);
+                const hashedPassword = await bcrypt.hash(userPassword, saltRounds);
+                let newUserUUID = uuidv4();
 
                 const newUser = new User({
-                    userUUID: uuidv4(),
-                    userName: name,
-                    userEmail: email,
+                    userUUID: newUserUUID,
+                    userName: userName,
+                    userEmail: userEmail,
                     userPassword: hashedPassword,
                     userAuthenticateType: "local"
                 });
 
                 await newUser.validate();
                 await newUser.save();
+                req.session.userId = newUserUUID;
                 return res.status(200).json({ message: 'User registered successfully' });
             } catch (error) {
                 console.error('Error saving new user data:', error);
