@@ -67,23 +67,31 @@ startServer()
             res.render('login');
         });
 
-        app.post('/login', async (req, res) => {
+        app.post('/api/login', async (req, res) => {
             try {
-                const { email, password } = req.body;
-                const user = await User.findOne({ userEmail: email });
+                const { userEmail, userPassword } = req.body;
+
+                // Log the received data (remove in production)
+                console.log('Login attempt:', { userEmail, userPassword: '****' });
+
+                const user = await User.findOne({ userEmail: userEmail });
                 if (!user) {
-                    return res.status(400).json({ message: 'User not found' });
+                    console.log('User not found:', userEmail);
+                    return res.status(400).json({ success: false, message: "Check credentials again" });
                 }
-                const isPasswordValid = await bcrypt.compare(password, user.userPassword);
+
+                const isPasswordValid = await bcrypt.compare(userPassword, user.userPassword);
                 if (isPasswordValid) {
                     req.session.userId = user.userUUID;
-                    res.json({ message: 'Login successful' });
+                    console.log('Login successful for user:', userEmail);
+                    res.status(200).json({ success: true, message: 'Login successful' });
                 } else {
-                    res.status(400).json({ message: 'Invalid password' });
+                    console.log('Invalid password for user:', userEmail);
+                    res.status(400).json({ success: false, message: 'Check credentials again' });
                 }
             } catch (error) {
                 console.error('Login error:', error);
-                res.status(500).json({ message: 'An error occurred during login' });
+                res.status(500).json({ success: false, message: 'An error occurred during login. Please try again later.' });
             }
         });
 
