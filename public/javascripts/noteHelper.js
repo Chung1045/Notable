@@ -1,5 +1,7 @@
 $(document).ready(function () {
     initNewNoteBox();
+    fetchUserInfo();
+    checkNoteCount();
 
     // Initialize Masonry
     const $grid = $('#container').masonry({
@@ -26,13 +28,45 @@ $(document).ready(function () {
             $noteCard.remove(); // Remove the note card
             $grid.masonry('layout'); // Update Masonry layout
             $('#ModalDialogue').modal('hide'); // Hide the modal
+            checkNoteCount();
         }
     });
+
+    $(document).on('click', '#image-userAvatar', function () {
+        const duration = 400;
+        $("#flyout").css('visibility', 'visible').hide().fadeIn(duration);
+    });
+
+    $(document).on('click', function(event) {
+        const flyout = $("#flyout");
+        const avatar = $("#image-userAvatar");
+
+        if (!flyout.is(event.target) &&
+            flyout.has(event.target).length === 0 &&
+            !avatar.is(event.target) &&
+            !$(event.target).hasClass('logout-btn')) {
+            flyout.fadeOut(400);
+        }
+    });
+
+    function checkNoteCount() {
+        const noteEntry = document.querySelectorAll(".note-card");
+        const $emptyMessage = $('#empty_message_div');
+        const duration = 400; // Duration of the fade effect in milliseconds
+
+        if (noteEntry.length === 0) {
+            $emptyMessage.css('visibility', 'visible').hide().fadeIn(duration);
+        } else {
+            $emptyMessage.fadeOut(duration, function () {
+                $(this).css('visibility', 'hidden');
+            });
+        }
+    }
 
     function initNewNoteBox() {
         const editableDiv = $('#input-new-entry-box');
         const createButton = $('#btn-create-note');
-        const fadeDuration = 200; // Duration of fade effect in milliseconds
+        const fadeDuration = 400; // Duration of fade effect in milliseconds
 
         function setPlaceholder() {
             if (editableDiv.text().trim() === '') {
@@ -48,6 +82,7 @@ $(document).ready(function () {
                 editableDiv.removeClass('placeholder');
             }
         }
+
 
         function toggleCreateButton() {
             if (editableDiv.text().trim() !== '' && !editableDiv.hasClass('placeholder')) {
@@ -83,6 +118,29 @@ $(document).ready(function () {
         });
     }
 
+    function fetchUserInfo() {
+        $.ajax({
+            url: '/api/fetchUserInfo',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({}),
+            success: function (response) {
+                console.log('Received response:', response);
+                if (response.userName && response.userEmail) {
+                    $("#flyout_username_value").text(response.userName);
+                    $("#flyout_email_value").text(response.userEmail);
+                } else {
+                    console.error('Unexpected response format:', response);
+                    alert('Failed to fetch user info. Please try again.');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error fetching user info:', error);
+                alert('An error occurred while fetching user info');
+            }
+        });
+    }
+
     // Add functionality to create a note
     $('#btn-create-note').on("click", function () {
         const noteContent = $('#input-new-entry-box').text().trim();
@@ -111,6 +169,7 @@ $(document).ready(function () {
                             .masonry('prepended', $newNote)
                             .masonry('layout');
 
+                        checkNoteCount();
                         $('#input-new-entry-box').text('').trigger('blur');
                     } else {
                         console.error('Error creating note:', response.message);

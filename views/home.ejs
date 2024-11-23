@@ -22,9 +22,9 @@
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script>
-    <!-- Ensure voteCard.css is loaded after Bootstrap to override its styles -->
     <link rel="stylesheet" href="/stylesheets/home.css">
     <script src="/javascripts/noteHelper.js"></script>
+    <script src="/javascripts/accountInfoFlyoutHelper.js"></script>
     <title>Notable Home</title>
 </head>
 <body>
@@ -32,7 +32,10 @@
 <div class="d-flex align-items-center justify-content-between mb-3" id="div-toolbar">
     <input type="text" class="form-control" id="input-search-box" placeholder="Search notes......">
     <img src="src/person-circle.svg" id="image-userAvatar" alt="User Icon" class="rounded-circle">
-    <a href="/logout">Logout</a>
+
+    <div id="flyout">
+        <%- include('accountInfoFlyout')%>
+    </div>
 </div>
 
 <div id="new-note-container-div">
@@ -44,7 +47,7 @@
     <div id="container">
         <% for (let note of allnotes) {
             console.log(note); %>
-        <div class="card note-card" data-note-uuid="<%= note.noteUUID %>"> <!-- Changed to class note-card -->
+        <div class="card note-card" data-note-uuid="<%= note.noteUUID %>">
             <p contenteditable="true" class="note-entry"
                data-note-uuid="<%= note.noteUUID %>"><%= note.noteContent %></p>
             <div class="d-flex justify-content-end" id="div_container_action_button">
@@ -103,6 +106,11 @@
     });
 
 </script>
+
+<div id="empty_message_div">
+    <h4>Wow! such empty</h4>
+    <p>Create a new note!</p>
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="ModalDialogue" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"

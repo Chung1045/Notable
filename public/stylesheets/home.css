@@ -50,6 +50,7 @@ body{
 #div-toolbar{
     width: 400px;
     margin: 20px 20px 20px auto;
+    z-index: 2;
     display: flex;
     justify-content: space-between;
     align-self: flex-end;
@@ -65,5 +66,25 @@ body{
     max-width: 600px;
     margin: 20px auto;
     padding: 0 15px;
+}
+
+#flyout{
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    z-index: 2;
+    visibility: hidden;
+    display: none;
+}
+
+#empty_message_div {
+    color: #666666;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    visibility: hidden;
+    display: none; /* Ensures it's initially hidden and takes no space */
 }
 

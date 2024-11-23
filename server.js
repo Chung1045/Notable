@@ -181,6 +181,36 @@ startServer()
             }
         });
 
+        app.post('/api/fetchUserInfo', async (req, res) => {
+            // Check if user is authenticated
+            if (!req.session.userId) {
+                return res.status(401).json({ error: 'User not authenticated' });
+            }
+
+            try {
+                console.log('Session userId:', req.session.userId);
+
+                // Fetch user from database
+                const user = await User.findOne({ userUUID: req.session.userId });
+
+                console.log('Found user:', user);
+
+                if (!user) {
+                    return res.status(404).json({ error: 'User not found' });
+                }
+
+                // Return user info
+                res.json({
+                    success: true,
+                    userName: user.userName,
+                    userEmail: user.userEmail
+                });
+            } catch (error) {
+                console.error('Error fetching user info:', error);
+                res.status(500).json({ error: 'Internal server error' });
+            }
+        });
+
         // For testing purpose
         app.get('/accountInfoFlyout', (req, res) => {
             res.render('accountInfoFlyout');
