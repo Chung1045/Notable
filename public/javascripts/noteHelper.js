@@ -177,12 +177,12 @@ $(document).ready(function () {
                     $("#flyout_email_value").text(response.userEmail);
                 } else {
                     console.error('Unexpected response format:', response);
-                    alert('Failed to fetch user info. Please try again.');
+                    showAlert("Failed to fetch user info.", "danger");
                 }
             },
             error: function (xhr, status, error) {
                 console.error('Error fetching user info:', error);
-                alert('An error occurred while fetching user info');
+                showAlert("Failed to fetch user info.", "danger");
             }
         });
     }
@@ -199,11 +199,11 @@ $(document).ready(function () {
             error: function (xhr, status, error) {
                 console.error('Error updating note:', xhr.responseText);
                 if (xhr.status === 404) {
-                    alert('Note not found. It may have been deleted.');
+                    showAlert("Note not found. It may have been already deleted.", "warning");
                 } else if (xhr.status === 401) {
-                    alert('You are not authorized to update this note.');
+                    showAlert("Unauthorized. Unable to perform action, please log in and try again.", "danger");
                 } else {
-                    alert('An error occurred while updating the note. Please try again.');
+                    showAlert("Failed to update note. Please try again.", "danger");
                 }
             }
         });
@@ -217,18 +217,18 @@ $(document).ready(function () {
             success: function (response) {
                 $(`[data-note-uuid="${noteUUID}"]`).remove();
                 checkNoteCount();
-                alert('Note deleted successfully');
+                showAlert("Note deleted successfully.", "success");
 
             },
             error: function (xhr, status, error) {
                 console.error('Error deleting note:', xhr.responseText);
                 // Provide more specific error messages based on the status code
                 if (xhr.status === 404) {
-                    alert('Note not found. It may have been already deleted.');
+                    showAlert("Note not found. It may have been already deleted.", "warning");
                 } else if (xhr.status === 401) {
-                    alert('You are not authorized to delete this note.');
+                    showAlert("Unauthorized. Unable to perform action, please log in and try again.", "danger");
                 } else {
-                    alert('An error occurred while deleting the note. Please try again.');
+                    showAlert("Failed to delete note. Please try again.", "danger");
                 }
             }
         });
@@ -245,15 +245,15 @@ $(document).ready(function () {
                     renderNoteCards(response.notes);
                 } else {
                     console.error('Error searching notes:', response.message);
-                    alert('An error occurred while searching notes: ' + response.message);
+                    showAlert("Failed to search notes. Please try again.", "danger");
                 }
             },
             error: function(xhr, status, error) {
                 console.error('Error searching notes:', xhr.responseText);
                 if (xhr.status === 401) {
-                    alert('You are not authenticated. Please log in and try again.');
+                    showAlert("Unauthorized. Please log in and try again.", "danger");
                 } else {
-                    alert('An error occurred while searching notes. Please try again.');
+                    showAlert("Failed to search notes. Please try again.", "danger");
                 }
             }
         });
@@ -322,19 +322,47 @@ $(document).ready(function () {
 
                         checkNoteCount();
                         $('#input-new-entry-box').text('').trigger('blur');
+                        showAlert("Note created successfully.", "success");
                     } else {
                         console.error('Error creating note:', response.message);
-                        alert('Failed to create note. Please try again.');
+                        showAlert("Failed to create note. Please try again.", "danger");
                     }
                 },
                 error: function (xhr, status, error) {
                     console.error('Error creating note:', error);
-                    alert('An error occurred while creating the note. Please try again.');
+                    showAlert("Failed to create note. Please try again.", "danger");
                 }
             });
         } else {
-            alert('Please enter some content for the note.');
+            showAlert("Please enter a note content before creating a new note.", "warning");
         }
     });
+
+    function showAlert(message, type = 'info', duration = 5000) {
+        const alertId = 'alert-' + Date.now(); // Generate a unique ID for the alert
+        const alertHtml = `
+        <div id="${alertId}" class="alert alert-${type} alert-dismissible fade" role="alert" style="display: none;">
+            ${message}
+        </div>
+    `;
+        const $alert = $(alertHtml);
+        $("#alertContainer").append($alert);
+
+        // Fade in the alert
+        $alert.fadeIn(300, function () {
+            $(this).addClass('show');
+        });
+
+        // Set up auto-dismiss
+        const dismissAlert = () => {
+            $alert.fadeOut(300, function () {
+                $(this).remove();
+            });
+        };
+
+        // Automatically remove the alert after the specified duration
+        const timeoutId = setTimeout(dismissAlert, duration);
+
+    }
 
 });

@@ -71,7 +71,6 @@ startServer()
 
                 const user = await User.findOne({ userEmail: userEmail });
                 if (!user) {
-                    console.log('User not found:', userEmail);
                     return res.status(400).json({ success: false, message: "Check credentials again" });
                 }
 
