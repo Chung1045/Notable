@@ -4,6 +4,8 @@ $(document).ready(function () {
     checkNoteCount();
 
     let intervalId;
+    let typingTimer;
+    const doneTypingInterval = 1000;
 
     // Initialize Masonry
     const $grid = $('#container').masonry({
@@ -71,6 +73,28 @@ $(document).ready(function () {
         updateNote(noteUUID, $(this).text());
 
     });
+
+    $(document).on('input', "#input-search-box", function() {
+        clearTimeout(typingTimer);
+
+        const searchTerm = $(this).val().trim();
+        if (searchTerm) {
+            typingTimer = setTimeout(() => doneTyping(searchTerm), doneTypingInterval);
+        } else {
+            doneTyping('');
+        }
+    });
+
+    function doneTyping(searchTerm) {
+        console.log("User stopped typing. Search term:", searchTerm);
+        clearLayout();
+        if (searchTerm) {
+            $('#search-results').text(`Searching for: ${searchTerm}`).show();
+        } else {
+            $('#search-results').hide();
+        }
+        searchNotes(searchTerm);
+    }
 
     function checkNoteCount() {
         const noteEntry = document.querySelectorAll(".note-card");
@@ -210,6 +234,67 @@ $(document).ready(function () {
                 }
             }
         });
+    }
+
+    function searchNotes(searchTerm) {
+        $.ajax({
+            url: '/api/searchNotes',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ keyword: searchTerm }),
+            success: function(response) {
+                if (response.success) {
+                    console.log(`Received ${response.notes.length} notes from server`);
+                    console.log(response);
+                    renderNoteCards(response.notes);
+                } else {
+                    console.error('Error searching notes:', response.message);
+                    alert('An error occurred while searching notes: ' + response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error searching notes:', xhr.responseText);
+                if (xhr.status === 401) {
+                    alert('You are not authenticated. Please log in and try again.');
+                } else {
+                    alert('An error occurred while searching notes. Please try again.');
+                }
+            }
+        });
+    }
+
+    function clearLayout() {
+        const $noteCards = $('.note-card');
+        $grid.masonry('remove', $noteCards);
+        $grid.masonry('layout');
+        checkNoteCount();
+    }
+
+    function renderNoteCards(notes) {
+        clearLayout(); // Clear existing notes from view
+
+        if (notes.length === 0) {
+            $('#search-results').text('No notes found').show();
+        } else {
+            $('#search-results').hide();
+            notes.forEach(note => {
+                const newNoteHtml = `
+                <div class="card note-card" data-note-uuid="${note._id}">
+                    <p contenteditable="true" class="note-entry" data-note-uuid="${note.noteUUID}">${note.noteContent}</p>
+                    <div class="d-flex justify-content-end" id="div_container_action_button">
+                        <i class="bi bi-trash action-icon" id="icon-delete" data-bs-toggle="tooltip" title="Delete note entry"></i>
+                    </div>
+                </div>
+            `;
+                const $newNote = $(newNoteHtml);
+                $grid.prepend($newNote)
+                    .masonry('prepended', $newNote);
+            });
+
+            $grid.masonry('layout');
+        }
+
+        checkNoteCount();
     }
 
     // Add functionality to create a note

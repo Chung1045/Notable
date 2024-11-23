@@ -281,5 +281,37 @@ startServer()
             }
         });
 
+        app.post('/api/searchNotes', async (req, res) => {
+            try {
+                const keyword = req.body.keyword;
+                const userId = req.session.userId;
+
+                if (!userId) {
+                    return res.status(401).json({ success: false, message: 'User not authenticated' });
+                }
+
+                console.log(keyword);
+
+                let notes;
+                if (keyword === '' || keyword === undefined || keyword === null) {
+                    // Return all user notes
+                    notes = await noteEntry.find({ noteUserUUID: userId }).sort({ updatedAt: -1 });
+                } else {
+                    // Return all user notes that contain the keyword
+                    notes = await noteEntry.find({
+                        noteUserUUID: userId,
+                        noteContent: { $regex: keyword, $options: 'i' }
+                    }).sort({ updatedAt: -1 });
+                }
+
+                console.log(`Found ${notes.length} notes for user ${userId} with keyword "${keyword}"`);
+
+                res.json({ success: true, notes: notes });
+            } catch (error) {
+                console.error('Error searching notes:', error);
+                res.status(500).json({ success: false, message: 'An error occurred while searching notes', error: error.message });
+            }
+        });
+
     });
 
