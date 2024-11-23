@@ -28,7 +28,7 @@ $(document).ready(function () {
             $noteCard.remove(); // Remove the note card
             $grid.masonry('layout'); // Update Masonry layout
             $('#ModalDialogue').modal('hide'); // Hide the modal
-            checkNoteCount();
+            deleteNote(noteUUID);
         }
     });
 
@@ -137,6 +137,32 @@ $(document).ready(function () {
             error: function (xhr, status, error) {
                 console.error('Error fetching user info:', error);
                 alert('An error occurred while fetching user info');
+            }
+        });
+    }
+
+    function deleteNote(noteUUID) {
+        $.ajax({
+            url: `/api/notes/${noteUUID}`,
+            type: 'DELETE',
+            contentType: 'application/json',
+            success: function (response) {
+                console.log('Note deleted successfully:', response);
+                $(`[data-note-uuid="${noteUUID}"]`).remove();
+                checkNoteCount();
+                alert('Note deleted successfully');
+
+            },
+            error: function (xhr, status, error) {
+                console.error('Error deleting note:', xhr.responseText);
+                // Provide more specific error messages based on the status code
+                if (xhr.status === 404) {
+                    alert('Note not found. It may have been already deleted.');
+                } else if (xhr.status === 401) {
+                    alert('You are not authorized to delete this note.');
+                } else {
+                    alert('An error occurred while deleting the note. Please try again.');
+                }
             }
         });
     }

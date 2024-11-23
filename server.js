@@ -56,7 +56,6 @@ startServer()
     .then(() => {
         const User = mongoose.model('User', userSchema);
         const noteEntry = mongoose.model('NoteEntry', noteEntrySchema);
-        console.log("The generated random UUID is " + uuidv4());
 
         app.get('/', requireAuth, async (req, res) => {
             res.redirect('/home');
@@ -211,11 +210,48 @@ startServer()
             }
         });
 
-        // For testing purpose
-        app.get('/accountInfoFlyout', (req, res) => {
-            res.render('accountInfoFlyout');
+        app.put('/api/notes/:id', async (req, res) => {
+            try{
+                const updatedNote = await noteEntry.findByIdAndUpdate(req.params.id, req.body, { new: true });
+                if (!updatedNote) {
+                    return res.status(404).send('Note not found');
+                }
+                res.send(updatedNote);
+            } catch (error) {
+                console.error('Error occured while updating the note:', error);
+                res.status(500).send('Updation of the note was unsuccessful');
+            }
         });
-        console.log(Date.now());
+
+        app.delete('/api/notes/:id', async (req, res) => {
+            try {
+                // Find the note by UUID instead of _id
+                const noteToBeDeleted = await noteEntry.findOne({ noteUUID: req.params.id });
+
+                // Check if the note exists
+                if (!noteToBeDeleted) {
+                    return res.status(404).json({ error: 'Note not found' });
+                }
+
+                // Check if the user is authorized to delete this note
+                if (noteToBeDeleted.noteUserUUID !== req.session.userId) {
+                    return res.status(401).json({ error: 'Note deletion unauthorized' });
+                }
+
+                // If we've passed both checks, proceed with deletion
+                const deletedNote = await noteEntry.findOneAndDelete({ noteUUID: req.params.id });
+
+                // Send back the deleted note as confirmation
+                res.json({
+                    message: 'Note successfully deleted',
+                    deletedNote: deletedNote
+                });
+
+            } catch (error) {
+                console.error('Error occurred while deleting the note:', error);
+                res.status(500).json({ error: 'Deletion of the note was unsuccessful' });
+            }
+        });
 
     });
 
