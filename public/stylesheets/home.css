@@ -33,10 +33,9 @@ body{
 }
 
 #input-new-entry-box{
-    width: 40%;
+    width: 100%;
     min-width: 400px;
     display: block;
-    margin: 0 auto;
 }
 
 #image-userAvatar {
@@ -59,5 +58,12 @@ body{
 #input-search-box{
     height: auto;
     padding: 8px;
+}
+
+#new-note-container-div {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 0 15px;
 }
 
