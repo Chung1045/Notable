@@ -3,6 +3,8 @@ $(document).ready(function () {
     fetchUserInfo();
     checkNoteCount();
 
+    let intervalId;
+
     // Initialize Masonry
     const $grid = $('#container').masonry({
         itemSelector: '.note-card', // Change to class for multiple cards
@@ -47,6 +49,27 @@ $(document).ready(function () {
             !$(event.target).hasClass('logout-btn')) {
             flyout.fadeOut(400);
         }
+    });
+
+    $(document).on('focus', '.note-entry', function () {
+        const $this = $(this);
+
+        clearInterval(intervalId);
+
+        intervalId = setInterval(() => {
+            const noteUUID = $this.attr('data-note-uuid');
+            console.log("Note UUID: ", noteUUID);
+            updateNote(noteUUID, $(this).text());
+        }, 5000);
+    });
+
+    $(document).on('blur', '.note-entry', function () {
+        const $this = $(this);
+        clearInterval(intervalId);
+        const noteUUID = $this.attr('data-note-uuid');
+        console.log("Note UUID: ", noteUUID);
+        updateNote(noteUUID, $(this).text());
+
     });
 
     function checkNoteCount() {
@@ -137,6 +160,28 @@ $(document).ready(function () {
             error: function (xhr, status, error) {
                 console.error('Error fetching user info:', error);
                 alert('An error occurred while fetching user info');
+            }
+        });
+    }
+
+    function updateNote(noteUUID, content) {
+        $.ajax({
+            url: `/api/notes/${noteUUID}`,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify({ content: content }),
+            success: function (response) {
+                console.log('Note updated successfully:', response);
+            },
+            error: function (xhr, status, error) {
+                console.error('Error updating note:', xhr.responseText);
+                if (xhr.status === 404) {
+                    alert('Note not found. It may have been deleted.');
+                } else if (xhr.status === 401) {
+                    alert('You are not authorized to update this note.');
+                } else {
+                    alert('An error occurred while updating the note. Please try again.');
+                }
             }
         });
     }

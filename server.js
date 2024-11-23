@@ -211,15 +211,43 @@ startServer()
         });
 
         app.put('/api/notes/:id', async (req, res) => {
-            try{
-                const updatedNote = await noteEntry.findByIdAndUpdate(req.params.id, req.body, { new: true });
-                if (!updatedNote) {
-                    return res.status(404).send('Note not found');
+            try {
+                // Find the note by UUID instead of _id
+                const noteToUpdate = await noteEntry.findOne({noteUUID: req.params.id});
+
+                if (!noteToUpdate) {
+                    return res.status(404).json({error: 'Note not found'});
                 }
-                res.send(updatedNote);
+
+                // Check if the user is authorized to update this note
+                if (noteToUpdate.noteUserUUID !== req.session.userId) {
+                    return res.status(401).json({error: 'Note update unauthorized'});
+                }
+
+                // Update the note
+                const updatedNote = await noteEntry.findOneAndUpdate(
+                    {noteUUID: req.params.id},
+                    {
+                        $set: {
+                            noteContent: req.body.content,
+                            noteLastModified: new Date().toISOString()
+                        }
+                    },
+                    {new: true}
+                );
+
+                res.json({
+                    success: true,
+                    message: 'Note updated successfully',
+                    note: updatedNote
+                });
             } catch (error) {
-                console.error('Error occured while updating the note:', error);
-                res.status(500).send('Updation of the note was unsuccessful');
+                console.error('Error occurred while updating the note:', error);
+                res.status(500).json({
+                    success: false,
+                    error: 'Update of the note was unsuccessful',
+                    message: error.message
+                });
             }
         });
 
