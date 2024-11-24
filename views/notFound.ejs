@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -13,25 +12,48 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <title>Not Found!</title>
     <style>
+        :root {
+            --bg-color: #fbfbfb;
+            --text-color: #333333;
+            --secondary-text-color: #666666;
+            --btn-bg: #007bff;
+            --btn-hover-bg: #0056b3;
+        }
+
+        body.dark-theme {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --secondary-text-color: #a0a0a0;
+            --btn-bg: #0d6efd;
+            --btn-hover-bg: #0b5ed7;
+        }
+
         body {
             display: none;
             font-family: "Inter", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         #message_div {
-            color: #666666;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
         }
+        #message_div p {
+            color: var(--secondary-text-color);
+        }
         .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
+            background-color: var(--btn-bg);
+            border-color: var(--btn-bg);
+            color: #ffffff;
         }
         .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
+            background-color: var(--btn-hover-bg);
+            border-color: var(--btn-hover-bg);
+            color: #ffffff;
         }
     </style>
 </head>
@@ -45,6 +67,9 @@
 
 <script>
     $(document).ready(function () {
+        const storedTheme = localStorage.getItem('theme') || 'light';
+        // Set initial theme
+        $("body").toggleClass('dark-theme', storedTheme === 'dark');
         $("body").fadeIn(500);
     });
 </script>
