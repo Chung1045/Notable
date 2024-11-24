@@ -5,10 +5,21 @@ A straightforward, self-hostable note-taking application.
 
 Developed using HTML / CSS / Javascript / Node.js
 
-This project was undertaken as a group assignment for the Server Side and Cloud Computing course (COMP S381F / S3810SEF) at HKMU.
+This project was undertaken as a group assignment for the Server Side and Cloud Computing course (COMP S381F / S3810SEF) at HKMU as Group 21.
 
 [🔗Try the live demo🔗](https://notable-q2ja.onrender.com)
 
+## Collaborators
+13712409 Lee Wing Chun
+
+13714440
+Muhammad Abdullah Bin Abid
+
+13727054 So Chi Yeung
+
+13514988 Leung Wai Chung
+
+13575830 Wong Ming Yin
 
 ## Requirements
 
