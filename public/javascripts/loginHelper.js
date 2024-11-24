@@ -1,4 +1,18 @@
 $(document).ready(function () {
+    const themeToggle = $('#themeToggle');
+    const body = $('body');
+    const storedTheme = localStorage.getItem('theme') || 'light';
+
+    // Set initial theme
+    body.toggleClass('dark-theme', storedTheme === 'dark');
+
+    themeToggle.on('click', function() {
+        body.toggleClass('dark-theme');
+        const currentTheme = body.hasClass('dark-theme') ? 'dark' : 'light';
+        $('#themeToggle').html(currentTheme === 'dark'? '☀️' : '🌕');
+        localStorage.setItem('theme', currentTheme);
+    });
+
     $(".btn-login").on("click", function (event) {
         event.preventDefault();
 

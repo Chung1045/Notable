@@ -1,41 +1,73 @@
-body{
-    background-color: #fbfbfb;
-    font-family: "Inter", sans-serif;
+:root {
+    --bg-color: #fbfbfb;
+    --text-color: #333333;
+    --card-bg: #fbfbfb;
+    --icon-hover-bg: #e0e0e0;
+    --avatar-bg: #808080;
+    --avatar-fill: #2d2d2d;
+    --empty-message-color: #666666;
+    --input-bg: #ffffff;
+    --input-border: #cccccc;
 }
+
+body.dark-theme {
+    --bg-color: #1a1a1a;
+    --text-color: #e0e0e0;
+    --card-bg: #2c2c2c;
+    --icon-hover-bg: #4a4a4a;
+    --avatar-bg: #4a4a4a;
+    --avatar-fill: #e0e0e0;
+    --empty-message-color: #a0a0a0;
+    --input-bg: #333333;
+    --input-border: #555555;
+}
+
+body {
+    background-color: var(--bg-color);
+    font-family: "Inter", sans-serif;
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 #container {
     width: 100%;
     margin: 0 auto;
-    padding: 20px 20px 0 20px; /* Add some padding on the sides */
+    padding: 20px 20px 0 20px;
 }
 
 .card {
     width: 400px;
     padding: 20px;
-    background-color: #fbfbfb;
+    background-color: var(--card-bg);
     border-radius: 8px;
     box-sizing: border-box;
     margin-bottom: 20px;
+    transition: background-color 0.3s ease;
 }
 
-.action-icon{
+.action-icon {
     margin-right: 15px;
     padding: 5px;
     border-radius: 8px;
+    color: var(--text-color);
 }
 
-.action-icon:hover{
+.action-icon:hover {
     cursor: pointer;
-    background-color: grey;
+    background-color: var(--icon-hover-bg);
 }
 
-.action-icon:last-child{
+.action-icon:last-child {
     margin-right: 0;
 }
 
-#input-new-entry-box{
+#input-new-entry-box {
     width: 100%;
     min-width: 400px;
     display: block;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--input-border);
 }
 
 #image-userAvatar {
@@ -43,11 +75,11 @@ body{
     padding: 4px;
     margin-left: 10px;
     border-radius: 50%;
-    fill: #2d2d2d;
-    background-color: grey;
+    fill: var(--avatar-fill);
+    background-color: var(--avatar-bg);
 }
 
-#div-toolbar{
+#div-toolbar {
     width: 400px;
     margin: 20px 20px 20px auto;
     z-index: 2;
@@ -56,9 +88,12 @@ body{
     align-self: flex-end;
 }
 
-#input-search-box{
+#input-search-box {
     height: auto;
     padding: 8px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--input-border);
 }
 
 #new-note-container-div {
@@ -68,7 +103,7 @@ body{
     padding: 0 15px;
 }
 
-#flyout{
+#flyout {
     position: fixed;
     top: 70px;
     right: 20px;
@@ -78,32 +113,115 @@ body{
 }
 
 #empty_message_div {
-    color: #666666;
+    color: var(--empty-message-color);
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
     visibility: hidden;
-    display: none; /* Ensures it's initially hidden and takes no space */
+    display: none;
 }
 
-.edit-active{
+.edit-active {
     padding: 5px;
 }
 
 .modal-actionButton-container-div {
     display: flex;
-    justify-content: flex-end; /* Align buttons to the right */
+    justify-content: flex-end;
     padding: 0;
-    margin: 0 16px 16px 16px; /* Add some space above the buttons */
+    margin: 0 16px 16px 16px;
 }
 
-.modal-actionButton-container-div button{
+.modal-actionButton-container-div button {
     margin-left: 10px;
 }
 
-.invalid-feedback{
+.invalid-feedback {
     margin-bottom: 10px;
 }
 
+.modal {
+    color: var(--text-color);
+}
+
+.modal .modal-content {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+}
+
+.modal .modal-header {
+    border-bottom-color: var(--input-border);
+}
+
+.modal .modal-footer {
+    border-top-color: var(--input-border);
+}
+
+.modal .close {
+    color: var(--text-color);
+}
+
+.modal input[type="text"],
+.modal input[type="email"],
+.modal input[type="password"] {
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border-color: var(--input-border);
+}
+
+.modal .btn-secondary {
+    background-color: var(--icon-hover-bg);
+    border-color: var(--input-border);
+    color: var(--text-color);
+}
+
+.modal .btn-primary {
+    background-color: #0056b3;
+    border-color: #004085;
+    color: #ffffff;
+}
+
+/* Adjust alert styles */
+.alert {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border-color: var(--input-border);
+}
+
+.alert-success {
+    background-color: #28a745;
+    border-color: #1e7e34;
+    color: #ffffff;
+}
+
+.alert-danger {
+    background-color: #dc3545;
+    border-color: #bd2130;
+    color: #ffffff;
+}
+
+.alert-info {
+    background-color: #17a2b8;
+    border-color: #117a8b;
+    color: #ffffff;
+}
+
+/* Ensure text inputs in modals are readable */
+.modal input::placeholder {
+    color: var(--empty-message-color);
+}
+
+/* Theme toggle button styles */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1000;
+}

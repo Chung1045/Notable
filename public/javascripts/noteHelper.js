@@ -7,6 +7,12 @@ $(document).ready(function () {
     let typingTimer;
     const doneTypingInterval = 1000;
 
+    const storedTheme = localStorage.getItem('theme') || 'light';
+
+    // Set initial theme
+    $("body").toggleClass('dark-theme', storedTheme === 'dark');
+    $("#toggle-theme-btn").text(storedTheme === 'dark' ? 'Toggle theme ☀️' : 'Toggle theme 🌕');
+
     // Initialize Masonry
     const $grid = $('#container').masonry({
         itemSelector: '.note-card', // Change to class for multiple cards

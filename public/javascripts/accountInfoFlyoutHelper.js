@@ -292,4 +292,11 @@ $(document).ready(function () {
         showModal("password");
     });
 
+    $(document).on('click', '#toggle-theme-btn', function () {
+        $("body").toggleClass('dark-theme');
+        const currentTheme = $("body").hasClass('dark-theme') ? 'dark' : 'light';
+        $("#toggle-theme-btn").text(currentTheme === 'dark' ? 'Toggle theme ☀️' : 'Toggle theme 🌕');
+        localStorage.setItem('theme', currentTheme);
+    });
+
 });
