@@ -68,6 +68,10 @@ npm start
 
 [🔗See here (Link)🔗](docs/projectFileOverview.md)
 
+## Operation Guide
+
+[🔗See here (Link)🔗](docs/operationGuide.md)
+
 ## Library used
 
 ### NPM packages

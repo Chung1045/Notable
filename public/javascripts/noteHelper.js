@@ -286,10 +286,8 @@ $(document).ready(function () {
                 $grid.prepend($newNote)
                     .masonry('prepended', $newNote);
             });
-
-            $grid.masonry('layout');
         }
-
+        $grid.masonry('layout');
         checkNoteCount();
     }
 
@@ -366,5 +364,6 @@ $(document).ready(function () {
     }
 
     $("body").fadeIn(500);
+    $grid.masonry('layout');
 
 });
