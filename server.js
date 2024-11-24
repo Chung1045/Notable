@@ -8,8 +8,9 @@ const app = express();
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const dotenv = require('dotenv');
+const backdropHelper = require('./public/javascripts/backdropHelper.js');
 
-const mongoDBURI = "mongodb+srv://server:wCBOhlZO9qwx5fGq@notable.4ntdo.mongodb.net/?retryWrites=true&w=majority&appName=Notable";
+const mongoDBURI = process.env.MONGODB_URI;
 
 const userSchema = require('./models/userSchema');
 const noteEntrySchema = require('./models/noteEntrySchema');
@@ -416,6 +417,16 @@ startServer()
                     message: 'An error occurred while searching notes',
                     error: error.message
                 });
+            }
+        });
+
+        app.post("/api/getBackDrop", async (req, res) => {
+            try {
+                const backgroundURL = await backdropHelper.fetchUnsplashBackground();
+                res.json({ success: true, backgroundURL });
+            } catch (e) {
+                console.error("Error fetching backdrop:", e);
+                res.status(500).json({ success: false, error: "Internal server error" });
             }
         });
 

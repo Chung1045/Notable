@@ -63,4 +63,69 @@ $(document).ready(function () {
             });
         }, 5000);
     }
+
+    async function fetchBackDrop() {
+        try {
+            const response = await $.ajax({
+                url: '/api/getBackDrop',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({}),
+            });
+
+            if (response.success) {
+                return response.backgroundURL;
+            } else {
+                throw new Error("Failed to fetch backdrop");
+            }
+        } catch (error) {
+            console.error("Error fetching backdrop, likely that you don't have an Unsplash API key\n", error);
+            return null;
+        }
+    }
+
+    function loadImage(url) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = url;
+            img.onload = () => resolve(img);
+            img.onerror = reject;
+        });
+    }
+
+    async function main() {
+        try {
+            $("body").fadeIn(500);
+            const imageUrl = await fetchBackDrop();
+            if (imageUrl) {
+                await loadImage(imageUrl);
+
+                // Create a new div for the background
+                const backgroundDiv = $('<div id="fade-background"></div>');
+                backgroundDiv.css({
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    backgroundImage: `url(${imageUrl})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    opacity: 0,
+                    zIndex: -1
+                });
+
+                // Append the background div to the body
+                $('body').append(backgroundDiv);
+
+                // Fade in the background
+                backgroundDiv.animate({ opacity: 1 }, 500);
+            }
+        } catch (error) {
+            console.error('Error loading the image:', error);
+        }
+    }
+
+    main();
+
 });
