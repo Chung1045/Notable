@@ -102,34 +102,6 @@ const requireAuth = (req, res, next) => {
     next();
 };
 
-app.post('/api/updateUsername', requireAuth, async (req, res) => {
-    try {
-        const { newUsername } = req.body;
-
-        // Check if the new username is already taken
-        const existingUser = await User.findOne({ userName: newUsername });
-        if (existingUser) {
-            return res.status(400).json({ success: false, message: 'Username already taken' });
-        }
-
-        // Update the username
-        const updatedUser = await User.findOneAndUpdate(
-            { userUUID: req.user.userUUID },
-            { userName: newUsername },
-            { new: true }
-        );
-
-        if (!updatedUser) {
-            return res.status(404).json({ success: false, message: 'User not found' });
-        }
-
-        res.status(200).json({ success: true, message: 'Username updated successfully', newUsername });
-    } catch (error) {
-        console.error('Error updating username:', error);
-        res.status(500).json({ success: false, message: 'An error occurred while updating the username' });
-    }
-});
-
 app.get('/auth/google',
     passport.authenticate('google', { scope: ['profile', 'email'] })
 );
@@ -309,11 +281,147 @@ startServer()
                 res.json({
                     success: true,
                     userName: user.userName,
-                    userEmail: user.userEmail
+                    userEmail: user.userEmail,
+                    userAuthenticateType: user.userAuthenticateType
                 });
             } catch (error) {
                 console.error('Error fetching user info:', error);
                 res.status(500).json({error: 'Internal server error'});
+            }
+        });
+
+        app.put('/api/updateUsername', requireAuth, async (req, res) => {
+            try {
+                const newUsername = req.body.newUserName;
+                const userId = req.session.userId; // Assuming you store userId in session
+
+                // Check if the new username is provided
+                if (!newUsername) {
+                    return res.status(400).json({ error: 'New username is required' });
+                }
+
+                // Check if the new username already exists
+                const existingUser = await User.findOne({ userName: newUsername });
+                if (existingUser) {
+                    return res.status(409).json({ error: 'Username already taken' });
+                }
+
+                // Find the current user and update their username
+                const updatedUser = await User.findOneAndUpdate(
+                    { userUUID: userId },
+                    { userName: newUsername },
+                    { new: true } // This option returns the updated document
+                );
+
+                if (!updatedUser) {
+                    return res.status(404).json({ error: 'User not found' });
+                }
+
+                res.json({
+                    success: true,
+                    message: 'Username updated successfully',
+                    newUsername: updatedUser.userName
+                });
+
+            } catch (error) {
+                console.error('Error updating username:', error);
+                res.status(500).json({ error: 'Internal server error' });
+            }
+        });
+
+        app.put('/api/updateEmail', requireAuth, async (req, res) => {
+            try {
+                const newEmail = req.body.newEmail;
+                const userId = req.session.userId; // Assuming you store userId in session
+
+                // Check if the new email is provided
+                if (!newEmail) {
+                    return res.status(400).json({ error: 'New email is required' });
+                }
+
+                // Find the current user
+                const currentUser = await User.findOne({ userUUID: userId });
+
+                if (!currentUser) {
+                    return res.status(404).json({ error: 'User not found' });
+                }
+
+                // Check if the user is authenticated via Google
+                if (currentUser.userAuthenticateType === 'google') {
+                    return res.status(403).json({ error: 'User authenticated via Google, feature not available' });
+                }
+
+                // Check if the new email already exists
+                const existingUser = await User.findOne({ userEmail: newEmail });
+                if (existingUser) {
+                    return res.status(409).json({ error: 'Email already in use' });
+                }
+
+                // Update the user's email
+                const updatedUser = await User.findOneAndUpdate(
+                    { userUUID: userId },
+                    { userEmail: newEmail },
+                    { new: true } // This option returns the updated document
+                );
+
+                res.json({
+                    success: true,
+                    message: 'Email updated successfully',
+                    newEmail: updatedUser.userEmail
+                });
+
+            } catch (error) {
+                console.error('Error updating email:', error);
+                res.status(500).json({ error: 'Internal server error' });
+            }
+        });
+
+        app.put('/api/updatePassword', requireAuth, async (req, res) => {
+            try {
+                const { currentPassword, newPassword, confirmPassword } = req.body;
+                const userId = req.session.userId; // Assuming you store userId in session
+
+                // Check if all required fields are provided
+                if (!currentPassword || !newPassword || !confirmPassword) {
+                    return res.status(400).json({ error: 'All fields are required' });
+                }
+
+                // Check if new password and confirm password match
+                if (newPassword !== confirmPassword) {
+                    return res.status(400).json({ error: 'New password and confirm password do not match' });
+                }
+
+                // Retrieve the user from the database
+                const user = await User.findOne({ userUUID: userId });
+                if (!user) {
+                    return res.status(404).json({ error: 'User not found' });
+                }
+
+                if (user.userAuthenticateType === 'google') {
+                    return res.status(403).json({ error: 'User authenticated via Google, feature not available' });
+                }
+
+                // Verify the current password
+                const isPasswordValid = await bcrypt.compare(currentPassword, user.userPassword);
+                if (!isPasswordValid) {
+                    return res.status(401).json({ error: 'Current password is incorrect' });
+                }
+
+                // Hash the new password
+                const saltRounds = 10;
+                const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
+
+                user.userPassword = hashedNewPassword;
+                await user.save();
+
+                res.json({
+                    success: true,
+                    message: 'Password updated successfully'
+                });
+
+            } catch (error) {
+                console.error('Error updating password:', error);
+                res.status(500).json({ error: 'Internal server error' });
             }
         });
 

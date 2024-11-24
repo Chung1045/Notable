@@ -34,7 +34,7 @@
     └── signup.ejs
 ```
 
-*Excluding folder from “.idea” and “node_modules”
+*Excluding folder from “.idea”, “node_modules” and "docs" folder
 
 ### server.js
 
@@ -44,7 +44,6 @@ It handles the CURD of the MongoDB database for user and note and more, for inst
 
 User
 
-- (POST) `/api/updateUsername` : Update username
 - (POST) `/api/login` : Handle login authentication using email and password
 - (POST) `/api/register` : Handle user registration using email and password
 - (POST) `/api/fetchUserInfo` : Get user information
@@ -56,6 +55,12 @@ Note
 - (PUT) `/api/notes/:id` : Handle the update of the user notes
 - (DELETE) `/api/notes/:id` : Handle deletion of the user notes
 - (POST) `/api/searchNotes` : Handle note Searching
+
+Settings
+
+- (PUT) `/api/updatePassword` : Update password (Google OAuth user not applicable)
+- (PUT) `/api/updateEmail` : Update email (Google OAuth user not applicable)
+- (PUT) `/api/updateUsername` : Update username
 
 Google OAuth
 

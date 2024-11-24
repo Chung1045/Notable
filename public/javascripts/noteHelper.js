@@ -181,9 +181,13 @@ $(document).ready(function () {
             data: JSON.stringify({}),
             success: function (response) {
                 console.log('Received response:', response);
-                if (response.userName && response.userEmail) {
+                if (response.userName && response.userEmail && response.userAuthenticateType) {
                     $("#flyout_username_value").text(response.userName);
                     $("#flyout_email_value").text(response.userEmail);
+                    if (response.userAuthenticateType === "google") {
+                        $("#edit-email").remove();
+                        $("#edit-password").remove();
+                    }
                 } else {
                     console.error('Unexpected response format:', response);
                     showAlert("Failed to fetch user info.", "danger");

@@ -92,3 +92,18 @@ body{
     padding: 5px;
 }
 
+.modal-actionButton-container-div {
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    padding: 0;
+    margin: 0 16px 16px 16px; /* Add some space above the buttons */
+}
+
+.modal-actionButton-container-div button{
+    margin-left: 10px;
+}
+
+.invalid-feedback{
+    margin-bottom: 10px;
+}
+
