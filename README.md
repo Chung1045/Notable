@@ -1,6 +1,5 @@
 # Notable
 
----
 
 A straightforward, self-hostable note-taking application.
 
@@ -8,7 +7,8 @@ Developed using HTML / CSS / Javascript / Node.js
 
 This project was undertaken as a group assignment for the Server Side and Cloud Computing course (COMP S381F / S3810SEF) at HKMU.
 
----
+[🔗Try the live demo🔗](https://notable-q2ja.onrender.com)
+
 
 ## Requirements
 
@@ -21,11 +21,10 @@ This project was undertaken as a group assignment for the Server Side and Cloud 
 - High network bandwidth (If you want to host your own)
 - An IDE (If you would like to make it your own)
 
-For computers that do not have Node.js, you can install at https://nodejs.org/en
+For computers that do not have Node.js installed, you can install [here](https://nodejs.org/en)
 
-For computers that do not have git installed, install at [https://git-scm.com](https://git-scm.com/)
+For computers that do not have git installed, install [here](https://git-scm.com/)
 
----
 
 ## Set up
 
@@ -35,7 +34,7 @@ For computers that do not have git installed, install at [https://git-scm.com](h
 git clone https://github.com/Chung1045/Notable.git
 ```
 
-1. Open the cloned folder in command line and install all required dependencies
+2. Open the cloned folder in command line and install all required dependencies
 
 ```
 npm i
@@ -45,14 +44,13 @@ npm i
 npm install
 ```
 
-1. Open the IDE to put in your own MongoDB API key
-2. Run the application
+3. Open the IDE to put in your own MongoDB API key
+4. Run the application
 
 ```
 npm start
 ```
 
----
 
 ## Features
 
@@ -62,8 +60,6 @@ npm start
 - Search note
 - Login
 - Sign-up
-
----
 
 ## Library used
 
