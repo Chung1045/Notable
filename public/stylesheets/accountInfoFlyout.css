@@ -29,3 +29,12 @@
 .logout-btn:hover {
     background-color: #A66E6E;
 }
+#container-username{
+    display: flex;
+}
+#container-email{
+    display: flex;
+}
+a{
+    padding-bottom: 10px;
+}

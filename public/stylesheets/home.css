@@ -88,3 +88,7 @@ body{
     display: none; /* Ensures it's initially hidden and takes no space */
 }
 
+.edit-active{
+    padding: 5px;
+}
+

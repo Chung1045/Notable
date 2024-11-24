@@ -15,6 +15,10 @@ $(document).ready(function () {
         fitWidth: true
     });
 
+    function updateGrid(){
+        $grid.masonry('layout');
+    }
+
     // Handle delete button click
     $(document).on('click', '#icon-delete', function () {
         const noteUUID = $(this).closest('.note-card').attr('data-note-uuid');
@@ -55,6 +59,7 @@ $(document).ready(function () {
 
     $(document).on('focus', '.note-entry', function () {
         const $this = $(this);
+        $this.addClass('edit-active');
 
         clearInterval(intervalId);
 
@@ -67,11 +72,15 @@ $(document).ready(function () {
 
     $(document).on('blur', '.note-entry', function () {
         const $this = $(this);
+        $this.removeClass('edit-active');
         clearInterval(intervalId);
         const noteUUID = $this.attr('data-note-uuid');
         console.log("Note UUID: ", noteUUID);
         updateNote(noteUUID, $(this).text());
+    });
 
+    $(document).on('input', '.note-entry', function () {
+        updateGrid();
     });
 
     $(document).on('input', "#input-search-box", function() {
@@ -364,6 +373,7 @@ $(document).ready(function () {
     }
 
     $("body").fadeIn(500);
-    $grid.masonry('layout');
+    updateGrid();
+
 
 });
