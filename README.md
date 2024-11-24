@@ -71,9 +71,10 @@ npm start
 - Edit notes (Auto save on interval of 5 seconds when focused, and when lost focus)
 - Delete notes
 - Search note
-- Login
-- Sign-up
+- Email Login
+- Email Sign-up
 - Google OAuth Login / Sign-up
+- Dark / Light mode
 
 ## Project File Overview
 
