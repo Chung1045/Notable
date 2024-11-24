@@ -8,7 +8,6 @@ const userSchema = new mongoose.Schema({
     userName: {
         type: String,
         required: true,
-        unique: true
     },
     userEmail: {
         type: String,
@@ -16,11 +15,14 @@ const userSchema = new mongoose.Schema({
     },
     userPassword: {
         type: String,
-        required: true
     },
     userAuthenticateType:{
         type: String,
         required: true
+    },
+    googleId:{
+        type: String,
+        unique: true
     }
 });
 module.exports = userSchema;
