@@ -241,6 +241,14 @@ startServer()
                     return res.status(400).json({message: 'Username or email already in use'});
                 }
 
+                //check email regex
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                const isValidEmail = emailRegex.test(userEmail);
+
+                if(!isValidEmail){
+                    return res.status(400).json({message: 'Invalid email format'});
+                }
+
                 // Hash the password
                 const saltRounds = 10;
                 const hashedPassword = await bcrypt.hash(userPassword, saltRounds);
