@@ -17,6 +17,14 @@ Using correct credentials to log in
 
 Result: User successfully authenticated and will be redirected to the home page
 
+Test using CURL
+
+```text
+curl -X POST http://your-api-url/api/login \
+-H "Content-Type: application/json" \
+-d '{"userEmail": "your_email@example.com", "userPassword": "your_password"}'
+```
+
 ### Invalid input
 Using incorrect credentials to log in / wrong email format
 
@@ -55,6 +63,14 @@ Username or email already exists / password does not match / Missing any field
 
 Result: Error message will be displayed
 
+```text
+curl -X POST http://your-api-url/api/login \
+-H "Content-Type: applicationcurl -X POST <url>/api/register \
+-H "Content-Type: application/json" \
+-d '{"userName": "your_username", "userEmail": "your_email@example.com", "userPassword": "your_password"}'/json" \
+-d '{"userEmail": "your_email@example.com", "userPassword": "your_password"}'
+```
+
 ### Google OAuth
 
 Uses post request `/auth/google` to login / register with Google OAuth
@@ -78,6 +94,13 @@ To create a note,
 3. Click the "Create" button (Send POST request `/api/note`))
 4. Wait the server to acknowledge and display a new card with the written content onto the page
 
+Test using CURL
+```text
+curl -X POST http://your-api-url/api/notes \
+-H "Content-Type: application/json" \
+-d '{"content": "Your note content here"}'
+```
+
 ## Edit note
 
 To edit a note,
@@ -85,12 +108,25 @@ To edit a note,
 2. Edit the content by typing it, changes will be saved automatically (Send PUT request `/api/note/:id`) with interval of 5 seconds when focus
 3. When the content lost focus, the changes will be saved to the database
 
+Test using CURL
+```text
+curl -X PUT http://your-api-url/api/notes/your_note_uuid \
+-H "Content-Type: application/json" \
+-d '{"content": "Updated note content here"}'
+```
+
 ## Delete note
 To delete a note,
 1. On the note that would like to delete, click the "Delete" icon button
 2. Click "Delete" to confirm the deletion
 3. Send DELETE request `/api/note/:id` to server to execute the delete action
 4. When the action is completed, the note will be removed from the page
+
+Test using CURL
+```text
+curl -X DELETE http://your-api-url/api/notes/your_note_uuid \
+-H "Content-Type: application/json"
+```
 
 ## Search note
 To search for a note,
@@ -103,6 +139,13 @@ If result is found, the system will display the result on the page
 If result is not found, the system will display a message that there are no matching results
 If the keyword is empty, the page will show all the note entry
 
+Test using CURL
+```text
+curl -X POST http://your-api-url/api/searchNotes \
+-H "Content-Type: application/json" \
+-d '{"keyword": "your_search_keyword"}'
+```
+
 ## Logout
 
 ![avatar-menu.png](img/avatar-menu.png)
@@ -111,3 +154,60 @@ To logout,
 1. Click the avatar icon
 2. Click "Logout" on the flyout menu (Send GET request `/logout`)
 3. Redirect to the login page
+
+## Change username
+
+To change the username,
+1. Click the avatar icon
+2. Click the edit icon next to the username on the flyout menu
+3. Enter the new username
+4. Click "Save" (Send PUT request `/api/updateUsername`)
+
+Test using CURL
+```text
+curl -X PUT http://your-api-url/api/updateUsername \
+-H "Content-Type: application/json" \
+-d '{"newUserName": "your_new_username"}'
+```
+
+
+## Change email address
+
+> [!NOTE]
+> This feature is not available for Google OAuth users
+
+To change the email address,
+1. Click the avatar icon
+2. Click the edit icon next to the email address on the flyout menu
+3. Enter the new email address
+4. Click "Save" (Send PUT request `/api/updateEmail`)
+
+If the update is acknowledged, the flyout will update the information accordingly.
+
+Test using CURL
+```text
+curl -X PUT http://your-api-url/api/updateEmail \
+-H "Content-Type: application/json" \
+-d '{"newEmail": "your_new_email@example.com"}'
+```
+
+## Change password
+
+> [!NOTE]
+> This feature is not available for Google OAuth users
+
+To change the password,
+1. Click the avatar icon
+2. Click "Change Password" on the flyout menu
+3. Enter the new password along with your current password
+4. Click "Save" (Send PUT request `/api/updatePassword`)
+
+Test using CURL
+```text
+curl -X PUT http://your-api-url/api/updatePassword \
+-H "Content-Type: application/json" \
+-d '{"currentPassword": "your_current_password", "newPassword": "your_new_password", "confirmPassword": "your_new_password"}'
+```
+
+
+
