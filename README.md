@@ -58,10 +58,9 @@ For computers that do not have git installed, install [here](https://git-scm.com
     ```
 
 3. Open the IDE to put in your own API keys, either in a `.env`file or in the configuration settings
-   > [!IMPORTANT] Mandatory: For self host
 
    | Field                       | Description                                                                      |
-       |-----------------------------|----------------------------------------------------------------------------------|
+   |-----------------------------|----------------------------------------------------------------------------------|
    | `GOOGLE_CLIENT_ID`          | Google Cloud OAuth Application Client ID                                         |
    | `GOOGLE_CLIENT_SECRET`      | Google Cloud OAuth Application Secret Key                                        |
    | `GOOGLE_CLOUD_CALLBACK_URL` | Callback URL to redirect with after successful / failure of OAuth authentication |
