@@ -100,6 +100,24 @@ $(document).ready(function () {
         }
     });
 
+    $("#select-time-search-option").change(function() {
+        let searchTerm = $("#input-search-box").val().trim();
+        const period = $('#select-time-search-option').val();
+
+        if (!searchTerm){
+            searchTerm = '';
+        }
+
+        if(period === 'time-all') {
+            console.log("Searching all notes");
+            searchNotes(searchTerm);
+        } else {
+            console.log("Searching notes with time period: ", period);
+            searchNotesWithPeriod(searchTerm, period);
+        }
+
+    });
+
     function doneTyping(searchTerm) {
         clearLayout();
         if (searchTerm) {
@@ -107,7 +125,16 @@ $(document).ready(function () {
         } else {
             $('#search-results').hide();
         }
-        searchNotes(searchTerm);
+
+        const period = $('#select-time-search-option').val();
+
+        if(period === 'time-all') {
+            console.log("Searching all notes");
+            searchNotes(searchTerm);
+        } else {
+            console.log("Searching notes with time period: ", period);
+            searchNotesWithPeriod(searchTerm, period);
+        }
     }
 
     function checkNoteCount() {
@@ -277,6 +304,32 @@ $(document).ready(function () {
             }
         });
     }
+
+    function searchNotesWithPeriod(searchTerm, period) {
+        $.ajax({
+            url: '/api/searchNotesWithTime',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ keyword: searchTerm, timePeriod: period }),
+            success: function(response) {
+                if (response.success) {
+                    renderNoteCards(response.notes);
+                } else {
+                    console.error('Error searching notes:', response.message);
+                    showAlert("Failed to search notes. Please try again.", "danger");
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error searching notes:', xhr.responseText);
+                if (xhr.status === 401) {
+                    showAlert("Unauthorized. Please log in and try again.", "danger");
+                } else {
+                    showAlert("Failed to search notes. Please try again.", "danger");
+                }
+            }
+        });
+    }
+
 
     function clearLayout() {
         const $noteCards = $('.note-card');

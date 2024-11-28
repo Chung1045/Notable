@@ -29,8 +29,17 @@
 </head>
 <body style="display: none">
 
-<div class="d-flex align-items-center justify-content-between mb-3" id="div-toolbar">
-    <input type="text" class="form-control" id="input-search-box" placeholder="Search notes......">
+<div class="d-flex align-items-center justify-content-between" id="div-toolbar">
+    <div class="input-group search">
+        <input type="text" class="form-control" id="input-search-box" placeholder="Search notes......">
+        <select id="select-time-search-option" class="d-flex justify-content-between align-items-center">
+            <option value="time-all" selected>All</option>
+            <option value="time-today">< 1d</option>
+            <option value="time-yesterday">1d</option>
+            <option value="time-lastWeek">1w</option>
+            <option value="time-lastMonth">1mo</option>
+        </select>
+    </div>
     <img src="src/person-circle.svg" id="image-userAvatar" alt="User Icon" class="rounded-circle">
 
     <div id="flyout">

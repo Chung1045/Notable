@@ -536,6 +536,82 @@ startServer()
             }
         });
 
+        app.post('/api/searchNotesWithTime', async (req, res) => {
+            try {
+                const keyword = req.body.keyword;
+                const timePeriod = req.body.timePeriod;
+                const userId = req.session.userId;
+
+                if (!userId) {
+                    return res.status(401).json({success: false, message: 'User not authenticated'});
+                }
+
+                let query = { noteUserUUID: userId };
+                let timeFilter = {};
+
+                // Add time-based filtering
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                switch(timePeriod) {
+                    case 'time-today':
+                        timeFilter = {
+                            $gte: today.toISOString(),
+                            $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000).toISOString()
+                        };
+                        break;
+                    case 'time-yesterday':
+                        const yesterday = new Date(today);
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        timeFilter = {
+                            $gte: yesterday.toISOString(),
+                            $lt: today.toISOString()
+                        };
+                        break;
+                    case 'time-lastWeek':
+                        const lastWeek = new Date(today);
+                        lastWeek.setDate(lastWeek.getDate() - 7);
+                        timeFilter = {
+                            $gte: lastWeek.toISOString(),
+                            $lte: now.toISOString()
+                        };
+                        break;
+                    case 'time-lastMonth':
+                        const lastMonth = new Date(today);
+                        lastMonth.setMonth(lastMonth.getMonth() - 1);
+                        timeFilter = {
+                            $gte: lastMonth.toISOString(),
+                            $lte: now.toISOString()
+                        };
+                        break;
+                    case 'time-all':
+                        timeFilter = { $lte: now.toISOString() };
+                        break;
+                }
+
+                if (Object.keys(timeFilter).length > 0) {
+                    query.noteLastModified = timeFilter;
+                }
+
+                // Add keyword search if provided
+                if (keyword && keyword.trim() !== '') {
+                    query.noteContent = { $regex: keyword, $options: 'i' };
+                }
+
+                const notes = await noteEntry.find(query).sort({noteLastModified: -1});
+
+
+                res.json({success: true, notes: notes});
+            } catch (error) {
+                console.error('Error searching notes:', error);
+                res.status(500).json({
+                    success: false,
+                    message: 'An error occurred while searching notes',
+                    error: error.message
+                });
+            }
+        });
+
+
         app.post("/api/getBackDrop", async (req, res) => {
             try {
                 const backgroundURL = await backdropHelper.fetchUnsplashBackground();

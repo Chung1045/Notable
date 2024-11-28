@@ -88,12 +88,13 @@ body {
     align-self: flex-end;
 }
 
-#input-search-box {
+#input-search-box, #select-time-search-option {
     height: auto;
     padding: 8px;
     background-color: var(--input-bg);
     color: var(--text-color);
     border: 1px solid var(--input-border);
+    border-radius: 8px;
 }
 
 #new-note-container-div {
