@@ -1,5 +1,8 @@
 # Operation Guide
 
+> [!NOTE]
+> To test the CURL Commands, replace the url either with the live demo url, or your self host one.
+
 ## Login
 
 ![login.png](img/login.png)

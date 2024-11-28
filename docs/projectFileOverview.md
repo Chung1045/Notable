@@ -55,6 +55,7 @@ Note
 - (PUT) `/api/notes/:id` : Handle the update of the user notes
 - (DELETE) `/api/notes/:id` : Handle deletion of the user notes
 - (POST) `/api/searchNotes` : Handle note Searching
+- (POST) `/api/searchNotesWithTime` : Handle note Searching along with time period filtering
 
 Settings
 
